@@ -1,39 +1,13 @@
-let pyodide;
+const code = document.getElementById("input").value;
 
-async function init() {
-    pyodide = await loadPyodide();
-}
+pyodide.globals.set("cpp_code", code);
 
-init();
-
-async function runPython() {
-
-    const code = document.getElementById("input").value;
-
-    pyodide.globals.set("cpp_code", code);
-
-    await pyodide.runPythonAsync(`
-import re
-
-def minify(code):
-
-    code = re.sub(r'//.*', '', code)
-    code = re.sub(r'/\\*.*?\\*/', '', code, flags=re.S)
-
-    lines = []
-
-    for line in code.splitlines():
-        line = line.strip()
-
-        if line:
-            lines.append(line)
-
-    return ''.join(lines)
+await pyodide.runPythonAsync(`
+from minifier import minify
 
 result = minify(cpp_code)
-    `);
+`);
 
-    const result = pyodide.globals.get("result");
+const result = pyodide.globals.get("result");
 
-    document.getElementById("output").textContent = result;
-}
+document.getElementById("output").textContent = result;
