@@ -1,3 +1,5 @@
+console.log("script loaded");
+
 const db = [
     '+', '-', '*', '/', '%', '?', ':', ';',
     '(', ')', '{', '}', '[', ']',
@@ -50,7 +52,7 @@ function minify(code) {
     return code;
 }
 
-function runPython() {
+function minifyCode() {
 
     const code =
         document.getElementById("input").value;
