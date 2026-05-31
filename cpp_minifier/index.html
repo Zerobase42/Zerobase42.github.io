@@ -1,49 +1,188 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>C++ Minifier</title>
-
-    <style>
-        #output{
-            white-space: pre-wrap;
-            border:1px solid black;
-            padding:10px;
-            width:650px;
-            min-height:300px;
-            overflow:auto;
-        }
-    </style>
-    <link rel="stylesheet" href="button.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C++ Minifier — Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12131a;
+    --chrome: #1c1e29;
+    --editor: #16171f;
+    --line: #272a38;
+    --text: #c8cde0;
+    --dim: #6b7088;
+    --green: #8ed09a;
+    --purple: #c4a7f5;
+    --blue: #7cc5f5;
+    --yellow: #e6cf8a;
+    --pink: #f08fa8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:"JetBrains Mono", monospace;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    justify-content:center;
+    padding:48px 24px 80px;
+  }
+  .wrap{width:100%;max-width:760px;}
+  .titlebar{
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:8px;
+  }
+  .dots{display:flex;gap:7px;}
+  .dots i{width:12px;height:12px;border-radius:50%;display:block;}
+  .dots i:nth-child(1){background:#f0656a;}
+  .dots i:nth-child(2){background:#e6cf8a;}
+  .dots i:nth-child(3){background:#8ed09a;}
+  .titlebar .path{
+    font-size:12px;color:var(--dim);margin-left:6px;
+  }
+  h1{
+    font-size:15px;font-weight:700;
+    color:var(--text);
+    margin:26px 0 18px;
+    display:flex;align-items:center;gap:10px;
+  }
+  h1::before{content:"$";color:var(--green);font-weight:700;}
+  h1 .cmd{color:var(--blue);}
+  .window{
+    background:var(--chrome);
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .tabbar{
+    display:flex;align-items:stretch;
+    background:var(--bg);
+    border-bottom:1px solid var(--line);
+  }
+  .tab{
+    font-size:12px;padding:9px 16px;
+    color:var(--dim);
+    border-right:1px solid var(--line);
+    display:flex;align-items:center;gap:7px;
+  }
+  .tab.active{background:var(--editor);color:var(--text);}
+  .tab .lang{color:var(--pink);}
+  .editor{
+    display:flex;
+    background:var(--editor);
+  }
+  .gutter{
+    padding:14px 0;
+    text-align:right;
+    color:var(--dim);
+    font-size:13px;line-height:1.7;
+    user-select:none;
+    background:var(--editor);
+    border-right:1px solid var(--line);
+    min-width:48px;
+  }
+  .gutter span{display:block;padding:0 14px;opacity:.6;}
+  textarea{
+    flex:1;
+    background:transparent;
+    border:none;
+    padding:14px 16px;
+    font-family:"JetBrains Mono", monospace;
+    font-size:13px;line-height:1.7;
+    color:var(--text);
+    resize:vertical;
+    outline:none;
+  }
+  textarea::placeholder{color:var(--dim);}
+  #input{height:280px;}
+  #output{height:180px;color:var(--green);}
+  .controls{
+    display:flex;align-items:center;gap:20px;
+    margin:18px 2px 40px;
+  }
+  button.run{
+    font-family:inherit;font-size:13px;font-weight:700;
+    color:var(--bg);
+    background:var(--green);
+    border:none;border-radius:6px;
+    padding:9px 20px;cursor:pointer;
+    display:flex;align-items:center;gap:8px;
+    transition:filter .15s ease, transform .12s ease;
+  }
+  button.run:hover{filter:brightness(1.1);}
+  button.run:active{transform:translateY(1px);}
+  button.run::before{content:"▶";font-size:10px;}
+  .toggle{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+  .toggle input{display:none;}
+  .track{
+    width:42px;height:22px;background:var(--line);
+    border:1px solid #343849;border-radius:99px;position:relative;
+    transition:background .2s ease, border-color .2s ease;
+  }
+  .track::after{
+    content:"";position:absolute;top:2px;left:2px;
+    width:16px;height:16px;background:var(--dim);border-radius:50%;
+    transition:transform .2s ease, background .2s ease;
+  }
+  .toggle input:checked + .track{background:rgba(142,208,154,.18);border-color:var(--green);}
+  .toggle input:checked + .track::after{transform:translateX(20px);background:var(--green);}
+  .toggle span{font-size:13px;color:var(--text);}
+  .toggle .hash{color:var(--dim);}
+  h2{
+    font-size:14px;font-weight:700;color:var(--purple);
+    margin:0 0 14px;display:flex;align-items:center;gap:9px;
+  }
+  h2::before{content:"//";color:var(--dim);}
+  .back{
+    position:fixed;top:18px;right:20px;
+    font-size:11px;color:var(--dim);text-decoration:none;
+  }
+  .back:hover{color:var(--green);}
+</style>
 </head>
-
 <body>
+  <a class="back" href="../index.html">← index</a>
+  <main class="wrap">
+    <h1>cpp-minify <span class="cmd">--watch</span></h1>
 
-<h1>C++ Minifier</h1>
+    <div class="window">
+      <div class="tabbar">
+        <div class="tab active"><span class="lang">●</span> input.cpp</div>
+        <div class="tab">main.hpp</div>
+      </div>
+      <div class="editor">
+        <div class="gutter" aria-hidden="true">
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span>
+        </div>
+        <textarea id="input" spellcheck="false" placeholder="#include <iostream>&#10;&#10;// entry point&#10;int main() {&#10;    std::cout << &quot;Hello&quot;;&#10;    return 0;&#10;}"></textarea>
+      </div>
+    </div>
 
-<textarea id="input" rows="20" cols="80"></textarea>
+    <div class="controls">
+      <button class="run">Minify</button>
+      <label class="toggle">
+        <input type="checkbox" checked>
+        <span class="track"></span>
+        <span><span class="hash">--</span>strip-comments · 주석 삭제</span>
+      </label>
+    </div>
 
-<br><br>
-
-<button onclick="minifyCode()">Minify</button>
-
-<div class="option-bar">
-    <input type="checkbox" id="switch" checked>
-
-    <label for="switch" class="switch_label">
-        <span class="onf_btn"></span>
-    </label>
-
-    <label for="switch" class="option-text">
-        주석 삭제
-    </label>
-</div>
-
-<h2>Output</h2>
-
-<pre id="output"></pre>
-
-<script src="script.js"></script>
-
+    <h2>Output</h2>
+    <div class="window">
+      <div class="tabbar">
+        <div class="tab active"><span class="lang">●</span> output.min.cpp</div>
+      </div>
+      <div class="editor">
+        <div class="gutter" aria-hidden="true"><span>1</span></div>
+        <textarea id="output" spellcheck="false" readonly placeholder="// minified result →"></textarea>
+      </div>
+    </div>
+  </main>
+  <script src="script.js"></script>
 </body>
 </html>
