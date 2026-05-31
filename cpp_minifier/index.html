@@ -14,6 +14,7 @@
             overflow:auto;
         }
     </style>
+    <link rel="stylesheet" href="button.css">
 </head>
 
 <body>
@@ -25,6 +26,18 @@
 <br><br>
 
 <button onclick="minifyCode()">Minify</button>
+
+<div class="option-bar">
+    <input type="checkbox" id="switch" checked>
+
+    <label for="switch" class="switch_label">
+        <span class="onf_btn"></span>
+    </label>
+
+    <label for="switch" class="option-text">
+        주석 삭제
+    </label>
+</div>
 
 <h2>Output</h2>
 

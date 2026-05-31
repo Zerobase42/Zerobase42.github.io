@@ -166,7 +166,7 @@ function restoreStrings(code, strings) {
     );
 }
 
-function minify(code) {
+function minify(code,removeComments=true) {
     const protectedData =
         protectStrings(code);
 
@@ -202,17 +202,19 @@ function minify(code) {
 
     code = result.join("\n");
 
-    // // 주석 제거
-    code = code.replace(
-        /\/\/[^\n]*/g,
-        ""
-    );
+    if (removeComments) {
+        // // 주석 제거
+        code = code.replace(
+            /\/\/[^\n]*/g,
+            ""
+        );
 
-    // /* */ 주석 제거
-    code = code.replace(
-        /\/\*[\s\S]*?\*\//g,
-        ""
-    );
+        // /* */ 주석 제거
+        code = code.replace(
+            /\/\*[\s\S]*?\*\//g,
+            ""
+        );
+    }
 
     // 빈 줄 제거
     code = code.replace(
@@ -237,11 +239,22 @@ function minifyCode() {
 
     const code =
         document.getElementById("input").value;
+    
+    const removeComments =
+        document.getElementById("switch").checked;
+
+    console.log(
+        "주석 삭제:",
+        removeComments
+    );
 
     const result =
         minify(code);
 
     document
-        .getElementById("output")
-        .textContent = result;
+        .getElementById("switch")
+        .addEventListener(
+            "change",
+            minifyCode
+        );
 }
