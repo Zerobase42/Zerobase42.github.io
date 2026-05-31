@@ -1,7 +1,7 @@
 console.log("script loaded");
 let db = [];
 
-const HARD_TEXT = "궭뷁쉛뤒";
+const HARD_TEXT = "궯둞쉞렣";
 
 async function loadDatabase() {
 
@@ -252,17 +252,46 @@ function minifyCode() {
         .value = result;
 }
 
+function updateLineNumbers() {
+    const lines =
+        document.getElementById("input")
+            .value
+            .split("\n")
+            .length;
+
+    document.getElementById("lineNumbers")
+        .innerHTML =
+            Array.from(
+                {length: lines},
+                (_, i) => i + 1
+            ).join("<br>");
+}
+
+document
+    .getElementById("input")
+    .addEventListener(
+        "input",
+        updateLineNumbers
+    );
+
+updateLineNumbers();
+
 window.addEventListener("DOMContentLoaded", () => {
 
     document
         .getElementById("minify-btn")
         .addEventListener("click", minifyCode);
-
-    document
-        .getElementById("input")
-        .addEventListener("input", minifyCode);
-
+    
     document
         .getElementById("switch")
         .addEventListener("change", minifyCode);
+    
+    document
+        .getElementById("input")
+        .addEventListener(
+            "input",
+            updateLineNumbers
+        );
+
+    updateLineNumbers();
 });
