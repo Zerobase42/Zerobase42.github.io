@@ -1,28 +1,41 @@
 console.log("script loaded");
-let db=[];
-const HARD_TEXT="궭뷁쉛뤒";
-async function loadDatabase(){
-    const text=await fetch("database.txt")
-        .then(r=>r.text());
-    db=text
+let db = [];
+
+const HARD_TEXT = "궭뷁쉛뤒";
+
+async function loadDatabase() {
+
+    const text = await fetch("database.txt")
+        .then(r => r.text());
+
+    db = text
         .split(/\r?\n/)
-        .map(x=>x.trim())
+        .map(x => x.trim())
         .filter(Boolean);
+    
+        // 길이내림차순 정렬
     db.sort((a,b)=>b.length-a.length);
-    console.log("database loaded:",db.length);
+    
+    console.log("database loaded:", db.length);
 }
+
 loadDatabase();
-function protectStrings(code){
-    const saved=[];
-    let result="";
-    let i=0;
-    function store(str){
-        const id=saved.length;
+
+function protectStrings(code) {
+    const saved = [];
+    let result = "";
+    let i = 0;
+
+    function store(str) {
+        const id = saved.length;
         saved.push(str);
         return `__STR_${id}__`;
     }
-    while(i<code.length){
-        let rawMatch=
+
+    while (i < code.length) {
+
+        // Raw String
+        let rawMatch =
             code.slice(i).match(
                 /^(?:u8|u|U|L)?R"([^ ()\\\t\r\n]{0,16})\(/
             );
@@ -31,130 +44,225 @@ function protectStrings(code){
             const delim = rawMatch[1];
             const startLen = rawMatch[0].length;
 
-            const endTag = ")"+delim+"\"";
-            const endPos=code.indexOf(
+            const endTag = ")" + delim + "\"";
+            const endPos = code.indexOf(
                 endTag,
-                i+startLen
+                i + startLen
             );
-            if(endPos!==-1){
-                const raw=
+
+            if (endPos !== -1) {
+                const raw =
                     code.slice(
                         i,
-                        endPos+endTag.length
+                        endPos + endTag.length
                     );
-                result+=store(raw);
-                i=endPos+endTag.length;
+
+                result += store(raw);
+                i = endPos + endTag.length;
                 continue;
             }
         }
-        let prefix=null;
-        if(
-            code.startsWith("u8\"",i)||
-            code.startsWith("u\"",i)||
-            code.startsWith("U\"",i)||
-            code.startsWith("L\"",i)
-        ){
-            if(code.startsWith("u8\"",i))
-                prefix="u8";
+
+        // 일반 문자열
+        let prefix = null;
+
+        if (
+            code.startsWith("u8\"", i) ||
+            code.startsWith("u\"", i) ||
+            code.startsWith("U\"", i) ||
+            code.startsWith("L\"", i)
+        ) {
+            if (code.startsWith("u8\"", i))
+                prefix = "u8";
             else
-                prefix=code[i];
+                prefix = code[i];
         }
-        if(
-            code[i]==='"'||
-            prefix!==null
-        ){
-            const start=i;
-            if(prefix==="u8")
-                i+=2;
-            else if(prefix)
-                i+=1;
-            i++;
-            code.startsWith("L\'",i)||
-            code.startsWith("u\'",i)||
-            code.startsWith("U\'",i)
-        ){
-            const start=i;
-            if(
-                code[i]!=='\''
-            ){
-                i++;
-            }
-            i++;
+
+        if (
+            code[i] === '"' ||
+            prefix !== null
+        ) {
+            const start = i;
+
+            if (prefix === "u8")
+                i += 2;
+            else if (prefix)
+                i += 1;
+
+            i++; // "
+
+            while (i < code.length) {
+
+                if (code[i] === '\\') {
+                    i += 2;
+                    continue;
+                }
+
+                if (code[i] === '"') {
                     i++;
                     break;
                 }
+
                 i++;
             }
-            result+=store(
-                code.slice(start,i)
+
+            result += store(
+                code.slice(start, i)
             );
             continue;
         }
-        result+=code[i];
+
+        // 문자 리터럴
+        if (
+            code[i] === '\'' ||
+            code.startsWith("L\'", i) ||
+            code.startsWith("u\'", i) ||
+            code.startsWith("U\'", i)
+        ) {
+            const start = i;
+
+            if (
+                code[i] !== '\''
+            ) {
+                i++;
+            }
+
+            i++; // '
+
+            while (i < code.length) {
+
+                if (code[i] === '\\') {
+                    i += 2;
+                    continue;
+                }
+
+                if (code[i] === '\'') {
+                    i++;
+                    break;
+                }
+
+                i++;
+            }
+
+            result += store(
+                code.slice(start, i)
+            );
+            continue;
+        }
+
+        result += code[i];
         i++;
     }
-    return{
-        code:result,
-        strings:saved
+
+    return {
+        code: result,
+        strings: saved
     };
 }
-function restoreStrings(code,strings){
+
+function restoreStrings(code, strings) {
     return code.replace(
         /__STR_(\d+)__/g,
-        (_,n)=>strings[+n]
+        (_, n) => strings[+n]
     );
 }
-function minify(code,removeComments=true){
-    const protectedData=
+
+function minify(code,removeComments=true) {
+    const protectedData =
         protectStrings(code);
-    code=protectedData.code;
-    const lines=code.split('\n');
-    const result=[];
-    for(let line of lines){
-        const stripped=line.trim();
-        line=line.replaceAll("    ",HARD_TEXT);
-        for(const op of db){
-            line=line.replaceAll(" "+op+" ",op);
-            line=line.replaceAll(op+" ",op);
-            line=line.replaceAll(" "+op,op);
+
+    code = protectedData.code;
+
+    const lines = code.split('\n');
+    const result = [];
+
+    for (let line of lines) {
+
+        const stripped = line.trim();
+
+        // 전처리문 유지
+        /*
+        if (stripped.startsWith('#')) {
+            result.push(stripped);
+            continue;
         }
+        */
+
+        line = line.replaceAll("    ", HARD_TEXT);
+
+        for (const op of db) {
+            line = line.replaceAll(" " + op + " ",op);
+            line = line.replaceAll(op + " ",op);
+            line = line.replaceAll(" " + op,op);
+        }
+
         result.push(
             line.replaceAll(HARD_TEXT,"    ")
         );
     }
-    code=result.join("\n");
-    if(removeComments){
-        code=code.replace(
+
+    code = result.join("\n");
+
+    if (removeComments) {
+        // // 주석 제거
+        code = code.replace(
             /\/\/[^\n]*/g,
             ""
         );
-        code=code.replace(
-            /\/\*[\s\S]*?\*\
+
+        // /* */ 주석 제거
+        code = code.replace(
+            /\/\*[\s\S]*?\*\//g,
             ""
         );
     }
-    code=code.replace(
+
+    // 빈 줄 제거
+    code = code.replace(
         /\n\s*\n+/g,
         "\n"
     );
-    code=restoreStrings(
+
+    code = restoreStrings(
         code,
         protectedData.strings
     );
+
     return code;
 }
-function minifyCode(){
-    if(db.length===0){
-        alert("database is not loaded yet. Please wait a moment and try again.");
+
+function minifyCode() {
+
+    if (db.length === 0) {
+        alert("database loading...");
         return;
     }
-    const code=
+
+    const code =
         document.getElementById("input").value;
-    const removeComments=
+
+    const removeComments =
         document.getElementById("switch").checked;
-    const result=
-        minify(code,removeComments);
+
+    const result =
+        minify(code, removeComments);
+
     document
         .getElementById("output")
-        .textContent=result;
+        .value = result;
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    document
+        .getElementById("minify-btn")
+        .addEventListener("click", minifyCode);
+
+    document
+        .getElementById("input")
+        .addEventListener("input", minifyCode);
+
+    document
+        .getElementById("switch")
+        .addEventListener("change", minifyCode);
+});
