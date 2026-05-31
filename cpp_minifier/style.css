@@ -135,60 +135,54 @@ h2::before{content:"//";color:var(--dim);}
 .back:hover{color:var(--green);}
 
 .colorscripter-wrapper{
-    background:#272727;
-    border-radius:4px;
-    overflow:hidden;
-    border:1px solid #4f4f4f;
-}
-
-.colorscripter-header{
-    background:#333;
-    color:#aaa;
-    padding:8px 12px;
-    font-size:12px;
-    border-bottom:1px solid #4f4f4f;
-}
-
-#input{
     width:100%;
-    height:300px;
-
-    background:#272727;
-    color:#f0f0f0;
-
-    border:none;
-    outline:none;
-    resize:vertical;
-
-    padding:10px;
-
-    font-family:
-        Consolas,
-        "Liberation Mono",
-        Menlo,
-        Courier,
-        monospace;
-
-    font-size:14px;
-    line-height:1.4;
+    background:var(--editor);
 }
+
 .codebox{
     display:flex;
-    background:#272727;
+    background:var(--editor);
 }
 
 #lineNumbers{
-    min-width:50px;
-    padding:10px 5px;
+    min-width:48px;
+    padding:14px 0;
     text-align:right;
-    color:#aaa;
-    background:#272727;
-    border-right:2px solid #4f4f4f;
+
+    color:var(--dim);
+    background:var(--editor);
+
+    border-right:1px solid var(--line);
+
     user-select:none;
-    font-family:Consolas, monospace;
-    line-height:1.4;
+
+    font-family:"JetBrains Mono", monospace;
+    font-size:13px;
+    line-height:1.7;
+}
+
+#lineNumbers br{
+    line-height:1.7;
 }
 
 #input{
     flex:1;
+
+    background:var(--editor);
+    color:var(--text);
+
+    border:none;
+    outline:none;
+
+    padding:14px 16px;
+
+    font-family:"JetBrains Mono", monospace;
+    font-size:13px;
+    line-height:1.7;
+
+    resize:vertical;
+}
+
+#input::placeholder{
+    color:var(--dim);
 }
