@@ -269,6 +269,7 @@ h2::before {
     font-size:13px;
     line-height:1.7;
     user-select:none;
+    overflow:hidden;
     padding:14px 8px;
 }
 #lineNumbers br {
@@ -294,14 +295,14 @@ h2::before {
 #output-highlight{
     flex:1;
     min-width:0;
+    overflow:auto;
     margin:0;
     padding:14px 16px;
-    overflow:auto;
     background:var(--editor);
-    white-space:pre;
     font-family:"JetBrains Mono", monospace;
     font-size:13px;
     line-height:1.7;
+    white-space:pre;
 }
 .editor,.codebox {
     display:flex;
@@ -312,5 +313,5 @@ textarea::placeholder,.toggle .hash {
 }
 #output-code{
     display:block;
-    width:100%;
+    min-width:max-content;
 }
