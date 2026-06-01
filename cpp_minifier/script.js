@@ -231,6 +231,28 @@ function minify(code,removeComments=true) {
     return code;
 }
 
+function updateOutputSize() {
+
+    const output =
+        document.getElementById(
+            "output-highlight"
+        );
+
+    const nums =
+        document.getElementById(
+            "outputLineNumbers"
+        );
+
+    const h =
+        Math.max(
+            180,
+            output.scrollHeight
+        );
+
+    nums.style.height =
+        h + "px";
+}
+
 function minifyCode() {
 
     if (db.length === 0) {
@@ -256,6 +278,18 @@ function minifyCode() {
         result;
 
     hljs.highlightElement(output);
+    const lines =
+        result.split("\n").length;
+
+    document.getElementById(
+        "outputLineNumbers"
+    ).innerHTML =
+        Array.from(
+            {length: lines},
+            (_, i) => i + 1
+        ).join("<br>");
+
+    updateOutputSize();
 }
 
 function updateHighlight() {
@@ -374,6 +408,19 @@ window.addEventListener(
             .addEventListener(
                 "change",
                 minifyCode
+            );
+        
+        document
+            .getElementById("output-highlight")
+            .addEventListener(
+                "scroll",
+                function () {
+
+                    document.getElementById(
+                        "outputLineNumbers"
+                    ).scrollTop =
+                        this.scrollTop;
+                }
             );
 
         updateLineNumbers();

@@ -256,16 +256,19 @@ h2::before {
     width:100%;
     background:var(--editor);
 }
-#lineNumbers {
+#lineNumbers,
+#outputLineNumbers{
+    width:50px;
+    min-width:50px;
+    flex-shrink:0;
     background:var(--editor);
     border-right:1px solid var(--line);
-    font-family:"JetBrains Mono",monospace;
-    font-size:13px;
-    min-width:50px;
     text-align:right;
     color:#888;
-    user-select:none;
+    font-family:"JetBrains Mono", monospace;
+    font-size:13px;
     line-height:1.7;
+    user-select:none;
     padding:14px 8px;
 }
 #lineNumbers br {
@@ -288,15 +291,17 @@ h2::before {
     margin:0;
     padding:14px 16px;
 }
-#output-highlight {
-    min-height:180px;
-    background:var(--editor);
-    overflow:auto;
-    font-family:"JetBrains Mono",monospace;
-    font-size:13px;
-    line-height:1.7;
+#output-highlight{
+    flex:1;
+    min-width:0;
     margin:0;
     padding:14px 16px;
+    overflow:auto;
+    background:var(--editor);
+    white-space:pre;
+    font-family:"JetBrains Mono", monospace;
+    font-size:13px;
+    line-height:1.7;
 }
 .editor,.codebox {
     display:flex;
@@ -304,4 +309,8 @@ h2::before {
 }
 textarea::placeholder,.toggle .hash {
     color: var(--dim);
+}
+#output-code{
+    display:block;
+    width:100%;
 }
