@@ -172,7 +172,8 @@ function updateHighlight(){
 }
 function updateEditorSize(){
     const input=document.getElementById("input");
-    const h=Math.max(280,input.scrollHeight);
+    input.style.height="auto";
+    const h=Math.min(Math.max(280,input.scrollHeight),500);
     input.style.height=h+"px";
     document.getElementById("input-highlight").style.height=h+"px";
     document.getElementById("lineNumbers").style.height=h+"px";
