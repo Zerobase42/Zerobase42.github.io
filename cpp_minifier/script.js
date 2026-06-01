@@ -168,8 +168,7 @@ function minifyCode(){
 function updateHighlight(){
     const input=document.getElementById("input");
     const code=document.getElementById("input-code");
-    code.textContent=input.value;
-    hljs.highlightElement(code);
+    code.innerHTML=hljs.highlight(input.value,{language:"cpp"}).value;
 }
 function updateEditorSize(){
     const input=document.getElementById("input");
