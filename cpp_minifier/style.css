@@ -273,6 +273,9 @@ h2::before {
     user-select:none;
     overflow:auto;
     padding:14px 8px;
+    overflow-y:scroll;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
 }
 .editor-container{
     position:relative;
@@ -322,4 +325,12 @@ textarea::placeholder,.toggle .hash {
 }
 #lineNumbers{
     white-space:pre;
+}
+#lineNumbers::-webkit-scrollbar,
+#outputLineNumbers::-webkit-scrollbar{
+    display:none;
+}
+#lineNumbers,
+#outputLineNumbers{
+    pointer-events:none;
 }
