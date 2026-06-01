@@ -247,9 +247,29 @@ function minifyCode() {
     const result =
         minify(code, removeComments);
 
-    document
-        .getElementById("output")
-        .value = result;
+    const output =
+        document.getElementById(
+            "output-code"
+        );
+
+    output.textContent =
+        result;
+
+    hljs.highlightElement(output);
+}
+
+function updateHighlight() {
+
+    const input =
+        document.getElementById("input");
+
+    const code =
+        document.getElementById("input-code");
+
+    code.textContent =
+        input.value;
+
+    hljs.highlightElement(code);
 }
 
 function updateLineNumbers() {
@@ -290,8 +310,8 @@ window.addEventListener("DOMContentLoaded", () => {
         .getElementById("input")
         .addEventListener(
             "input",
-            updateLineNumbers
+            updateHighlight
         );
 
-    updateLineNumbers();
+    updateHighlight();
 });
