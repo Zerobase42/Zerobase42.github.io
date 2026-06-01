@@ -111,7 +111,6 @@ h1 .cmd {
     text-align:right;
     color:var(--dim);
     font-size:13px;
-    line-height:1.7;
     user-select:none;
     background:var(--editor);
     border-right:1px solid var(--line);
@@ -129,7 +128,6 @@ textarea {
     border:none;
     font-family:"JetBrains Mono",monospace;
     font-size:13px;
-    line-height:1.7;
     color:var(--text);
     resize:vertical;
     outline:none;
@@ -146,7 +144,6 @@ textarea {
     z-index:2;
     font-family:"JetBrains Mono",monospace;
     font-size:13px;
-    line-height:1.7;
     resize:none;
     margin:0;
     padding:14px 16px;
@@ -267,13 +264,9 @@ h2::before {
     color:#888;
     font-family:"JetBrains Mono", monospace;
     font-size:13px;
-    line-height:1.7;
     user-select:none;
     overflow:hidden;
     padding:14px 8px;
-}
-#lineNumbers br {
-    line-height:1.7;
 }
 .editor-container{
     position:relative;
@@ -287,7 +280,6 @@ h2::before {
     background:var(--editor);
     font-family:"JetBrains Mono",monospace;
     font-size:13px;
-    line-height:1.7;
     pointer-events:none;
     margin:0;
     padding:14px 16px;
@@ -301,7 +293,6 @@ h2::before {
     background:var(--editor);
     font-family:"JetBrains Mono", monospace;
     font-size:13px;
-    line-height:1.7;
     white-space:pre;
 }
 .editor,.codebox {
@@ -314,4 +305,15 @@ textarea::placeholder,.toggle .hash {
 #output-code{
     display:block;
     min-width:max-content;
+}
+#lineNumbers,
+#input,
+#input-highlight,
+#output-highlight,
+#outputLineNumbers{
+    font-size:13px;
+    line-height:22px;
+}
+#lineNumbers{
+    white-space:pre;
 }

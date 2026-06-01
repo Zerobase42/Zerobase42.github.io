@@ -162,7 +162,7 @@ function minifyCode(){
     const lines=result.split("\n").length;
     document.getElementById("outputLineNumbers")
         .innerHTML=Array.from({length:lines},(_,i)=>i+1)
-        .join("<br>");
+        .join("\n");
     updateOutputSize();
 }
 function updateHighlight(){
@@ -182,7 +182,7 @@ function updateLineNumbers(){
     const lines=input.value.split("\n").length;
     document.getElementById("lineNumbers")
         .innerHTML=Array.from({length:lines},(_,i)=>i+1)
-        .join("<br>");
+        .join("\n");
     updateEditorSize();
 }
 loadDatabase();
