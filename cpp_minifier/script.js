@@ -272,46 +272,111 @@ function updateHighlight() {
     hljs.highlightElement(code);
 }
 
+function updateEditorSize() {
+
+    const input =
+        document.getElementById("input");
+
+    const h =
+        Math.max(
+            280,
+            input.scrollHeight
+        );
+
+    input.style.height =
+        h + "px";
+
+    document.getElementById(
+        "input-highlight"
+    ).style.height =
+        h + "px";
+
+    document.getElementById(
+        "lineNumbers"
+    ).style.height =
+        h + "px";
+}
+
 function updateLineNumbers() {
+    const input =
+        document.getElementById("input");
+
     const lines =
-        document.getElementById("input")
-            .value
-            .split("\n")
-            .length;
+        input.value.split("\n").length;
 
     document.getElementById("lineNumbers")
         .innerHTML =
             Array.from(
-                {length: lines},
+                { length: lines },
                 (_, i) => i + 1
             ).join("<br>");
+
+    updateEditorSize();
 }
 
-document
-    .getElementById("input")
-    .addEventListener(
-        "input",
-        updateLineNumbers
-    );
+loadDatabase();
 
-updateLineNumbers();
+window.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-window.addEventListener("DOMContentLoaded", () => {
+        const input =
+            document.getElementById(
+                "input"
+            );
 
-    document
-        .getElementById("minify-btn")
-        .addEventListener("click", minifyCode);
-    
-    document
-        .getElementById("switch")
-        .addEventListener("change", minifyCode);
-    
-    document
-        .getElementById("input")
-        .addEventListener(
+        input.addEventListener(
             "input",
-            updateHighlight
+            () => {
+                updateLineNumbers();
+                updateHighlight();
+            }
         );
 
-    updateHighlight();
-});
+        input.addEventListener(
+            "scroll",
+            () => {
+
+                const pre =
+                    document.getElementById(
+                        "input-highlight"
+                    );
+
+                const nums =
+                    document.getElementById(
+                        "lineNumbers"
+                    );
+
+                pre.scrollTop =
+                    input.scrollTop;
+
+                pre.scrollLeft =
+                    input.scrollLeft;
+
+                nums.scrollTop =
+                    input.scrollTop;
+            }
+        );
+
+        document
+            .getElementById(
+                "minify-btn"
+            )
+            .addEventListener(
+                "click",
+                minifyCode
+            );
+
+        document
+            .getElementById(
+                "switch"
+            )
+            .addEventListener(
+                "change",
+                minifyCode
+            );
+
+        updateLineNumbers();
+        updateHighlight();
+    }
+);
