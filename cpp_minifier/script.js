@@ -145,7 +145,7 @@ function minify(code,removeComments=true){
 function updateOutputSize(){
     const output=document.getElementById("output-highlight");
     const nums=document.getElementById("outputLineNumbers");
-    const h=requestAnimationFrame(updateOutputSize);
+    const h=Math.max(180,output.scrollHeight);
     nums.style.height=h+"px";
 }
 function minifyCode(){
