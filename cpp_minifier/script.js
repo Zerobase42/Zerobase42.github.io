@@ -145,7 +145,7 @@ function minify(code,removeComments=true){
 function updateOutputSize(){
     const output=document.getElementById("output-highlight");
     const nums=document.getElementById("outputLineNumbers");
-    const h=Math.max(180,output.scrollHeight);
+    const h=requestAnimationFrame(updateOutputSize);
     nums.style.height=h+"px";
 }
 function minifyCode(){
@@ -157,12 +157,11 @@ function minifyCode(){
     const removeComments=document.getElementById("switch").checked;
     const result=minify(code,removeComments);
     const output=document.getElementById("output-code");
-    output.textContent=result;
-    hljs.highlightElement(output);
+    output.innerHTML=hljs.highlight(result,{language:"cpp"}).value;
     const lines=result.split("\n").length;
     document.getElementById("outputLineNumbers")
         .innerHTML=Array.from({length:lines},(_,i)=>i+1)
-        .join("\n");
+        .join("<br>");
     updateOutputSize();
 }
 function updateHighlight(){
@@ -186,7 +185,6 @@ function updateLineNumbers(){
         .join("\n");
     updateEditorSize();
 }
-loadDatabase();
 window.addEventListener(
     "DOMContentLoaded",
     ()=>{
