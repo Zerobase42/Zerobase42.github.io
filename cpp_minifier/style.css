@@ -332,9 +332,6 @@ textarea::placeholder,.toggle .hash {
     font-size:13px;
     line-height:22px;
 }
-#lineNumbers{
-    white-space:pre;
-}
 #lineNumbers::-webkit-scrollbar,
 #outputLineNumbers::-webkit-scrollbar{
     display:none;
