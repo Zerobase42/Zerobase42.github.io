@@ -142,12 +142,6 @@ function minify(code,removeComments=true){
     code=restoreStrings(code,protectedData.strings);
     return code;
 }
-function updateOutputSize(){
-    const output=document.getElementById("output-highlight");
-    const nums=document.getElementById("outputLineNumbers");
-    const h=Math.max(180,output.scrollHeight);
-    nums.style.height=h+"px";
-}
 function minifyCode(){
     if(db.length===0){
         alert("database loading...");
@@ -162,7 +156,6 @@ function minifyCode(){
     document.getElementById("outputLineNumbers")
         .innerHTML=Array.from({length:lines},(_,i)=>i+1)
         .join("<br>");
-    updateOutputSize();
 }
 function updateHighlight(){
     const input=document.getElementById("input");

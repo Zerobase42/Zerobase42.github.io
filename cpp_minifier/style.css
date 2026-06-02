@@ -262,6 +262,7 @@ h2::before {
 #lineNumbers,
 #outputLineNumbers{
     width:50px;
+    height:auto;
     min-width:50px;
     flex-shrink:0;
     background:var(--editor);
@@ -311,6 +312,7 @@ h2::before {
 }
 .editor,.codebox {
     display:flex;
+    align-items:stretch;
     background:var(--editor);
 }
 textarea::placeholder,.toggle .hash {
