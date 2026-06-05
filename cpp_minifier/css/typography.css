@@ -1,0 +1,25 @@
+h2 {
+    font-size:14px;
+    font-weight:700;
+    color:var(--purple);
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin:0 0 14px;
+}
+h2::before {
+    content:"//";
+    color:var(--dim);
+}
+textarea::placeholder,.toggle .hash {
+    color: var(--dim);
+}
+pre,
+code{
+    margin:0;
+    padding:0;
+}
+.hljs{
+    background:transparent !important;
+    padding:0 !important;
+}

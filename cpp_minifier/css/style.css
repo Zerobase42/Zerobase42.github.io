@@ -336,9 +336,6 @@ textarea::placeholder,.toggle .hash {
 #outputLineNumbers::-webkit-scrollbar{
     display:none;
 }
-#input-highlight{
-    pointer-events:none;
-}
 #output-highlight{
     pointer-events:auto;
 }

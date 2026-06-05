@@ -1,0 +1,11 @@
+.back {
+    position:fixed;
+    top:18px;
+    right:20px;
+    font-size:11px;
+    color:var(--dim);
+    text-decoration:none;
+}
+.back:hover {
+    color:var(--green);
+}

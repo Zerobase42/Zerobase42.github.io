@@ -1,0 +1,43 @@
+#output {
+    height:180px;
+    color:var(--green);
+}
+#output-highlight{
+    position:absolute;
+    inset:0;
+    overflow:auto;
+    background:var(--editor);
+    font-size:13px;
+    line-height:1.7;
+    margin:0;
+    padding:14px 16px;
+    white-space:pre;
+    pointer-events:auto;
+}
+#output-code{
+    display:block;
+    min-width:max-content;
+}
+#outputLineNumbers{
+    width:50px;
+    height:auto;
+    min-width:50px;
+    flex-shrink:0;
+    background:var(--editor);
+    border-right:1px solid var(--line);
+    text-align:right;
+    color:#888;
+    font-size:13px;
+    user-select:none;
+    overflow:hidden;
+    pointer-events:none;
+    padding:14px 8px;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+    white-space:pre;
+}
+#outputLineNumbers::-webkit-scrollbar{
+    display:none;
+}

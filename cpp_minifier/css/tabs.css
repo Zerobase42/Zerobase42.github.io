@@ -1,0 +1,22 @@
+.tabbar {
+    display:flex;
+    align-items:stretch;
+    background:var(--bg);
+    border-bottom:1px solid var(--line);
+}
+.tab {
+    font-size:12px;
+    color:var(--dim);
+    border-right:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding:9px 16px;
+}
+.tab.active {
+    background:var(--editor);
+    color:var(--text);
+}
+.tab .lang {
+    color:var(--pink);
+}

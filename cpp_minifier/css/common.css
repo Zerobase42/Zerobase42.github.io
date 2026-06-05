@@ -1,0 +1,17 @@
+#lineNumbers,
+#outputLineNumbers,
+#input,
+#input-highlight,
+#output-highlight,
+#output-code,
+.hljs{
+    font-size:13px;
+    line-height:22px;
+}
+#lineNumbers,
+#outputLineNumbers,
+#input,
+#input-highlight,
+#output-highlight{
+    font-family:"JetBrains Mono",monospace;
+}

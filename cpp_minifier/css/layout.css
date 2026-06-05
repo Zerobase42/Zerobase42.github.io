@@ -1,0 +1,47 @@
+.wrap {
+    width:100%;
+    max-width:760px;
+}
+.window {
+    background:var(--chrome);
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+}
+.colorscripter-wrapper {
+    width:100%;
+    background:var(--editor);
+}
+.editor-container{
+    position:relative;
+    width:100%;
+    min-height:280px;
+    max-height:60vh;
+}
+.output-container{
+    position:relative;
+    width:100%;
+    min-height:280px;
+    max-height:60vh;
+    overflow:hidden;
+}
+.editor,.codebox {
+    display:flex;
+    align-items:stretch;
+    background:var(--editor);
+}
+.gutter {
+    text-align:right;
+    color:var(--dim);
+    font-size:13px;
+    user-select:none;
+    background:var(--editor);
+    border-right:1px solid var(--line);
+    min-width:48px;
+    padding:14px 0;
+}
+.gutter span {
+    display:block;
+    opacity:.6;
+    padding:0 14px;
+}

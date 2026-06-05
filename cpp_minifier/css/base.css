@@ -1,0 +1,30 @@
+:root {
+    --bg:#12131a;
+    --chrome:#1c1e29;
+    --editor:#16171f;
+    --line:#272a38;
+    --text:#c8cde0;
+    --dim:#6b7088;
+    --green:#8ed09a;
+    --purple:#c4a7f5;
+    --blue:#7cc5f5;
+    --yellow:#e6cf8a;
+    --pink:#f08fa8;
+}
+* {
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+html,body {
+    height:100%;
+}
+body {
+    font-family:"JetBrains Mono",monospace;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    justify-content:center;
+    padding:48px 24px 80px;
+}
