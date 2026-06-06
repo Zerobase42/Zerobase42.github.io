@@ -11,18 +11,27 @@ from "./update.js";
 
 import {minifyCode}
 from "./output.js";
-/* v.1.6 : code 공유 기능
-import {loadSharedCode}
+
+import {shareCode}
 from "./share.js";
-*/
 
 window.addEventListener(
     "DOMContentLoaded",
     async ()=>{
         await loadDatabase();
-        /* v.1.6 : code 공유 기능
-        await loadSharedCode();
-        */
+        const params=new URLSearchParams(location.search);
+        const shared=params.get("code");
+        if(shared){
+            try{
+                document
+                    .getElementById("input")
+                    .value=await decompress(shared);
+            }
+            catch(e){
+                alert("Failed to restore shared code. please check the link.");
+                console.error("공유 코드 복원 실패",e);
+            }
+        }
         const input=document.getElementById("input");
         input.addEventListener("input",
             ()=>{
@@ -47,10 +56,10 @@ window.addEventListener(
             .addEventListener("change",minifyCode);
         document
             .getElementById("output-highlight")
-            .addEventListener(
-                "scroll",
+            .addEventListener("scroll",
                 function(){
-                    document.getElementById("outputLineNumbers")
+                    document
+                        .getElementById("outputLineNumbers")
                         .scrollTop=this.scrollTop;
                 }
             );

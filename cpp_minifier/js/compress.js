@@ -1,3 +1,5 @@
+console.log("compress.js loaded");
+
 export async function compress(text){
     const compressedStream=
         new Blob([text])
