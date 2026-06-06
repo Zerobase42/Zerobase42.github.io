@@ -1,6 +1,6 @@
 export let db=[];
 export async function loadDatabase(){
-    const text=await fetch("database.txt")
+    const text=await fetch("./js/database.txt")
         .then(r=>r.text());
     db=text
         .split(/\r?\n/)
