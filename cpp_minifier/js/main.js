@@ -11,14 +11,18 @@ from "./update.js";
 
 import {minifyCode}
 from "./output.js";
-/* v.1.5 : code 공유 기능
+/* v.1.6 : code 공유 기능
 import {loadSharedCode}
 from "./share.js";
 */
 
 window.addEventListener(
     "DOMContentLoaded",
-    ()=>{
+    async ()=>{
+        await loadDatabase();
+        /* v.1.6 : code 공유 기능
+        await loadSharedCode();
+        */
         const input=document.getElementById("input");
         input.addEventListener("input",
             ()=>{
