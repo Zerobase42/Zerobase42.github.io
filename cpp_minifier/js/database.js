@@ -1,3 +1,5 @@
+console.log("database.js loaded");
+
 export let db=[];
 export async function loadDatabase(){
     const text=await fetch("./js/database.txt")

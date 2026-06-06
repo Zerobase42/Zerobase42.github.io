@@ -1,3 +1,5 @@
+console.log("stringProtect.js loaded");
+
 export function protectStrings(code){
     const saved=[];
     let result="";

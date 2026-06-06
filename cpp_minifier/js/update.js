@@ -1,3 +1,5 @@
+console.log("update.js loaded");
+
 export function updateHighlight(){
     const input=document.getElementById("input");
     const code=document.getElementById("input-code");

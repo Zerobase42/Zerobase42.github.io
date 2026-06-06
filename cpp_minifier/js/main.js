@@ -1,3 +1,5 @@
+console.log("main.js loaded");
+
 import {loadDatabase}
 from "./database.js";
 
