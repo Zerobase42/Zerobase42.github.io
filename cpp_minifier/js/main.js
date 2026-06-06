@@ -5,13 +5,14 @@ import {
     updateLineNumbers,
     updateHighlight
 }
-from "./editor.js";
+from "./update.js";
 
 import {minifyCode}
 from "./output.js";
-
+/* v.1.5 : code 공유 기능
 import {loadSharedCode}
 from "./share.js";
+*/
 
 window.addEventListener(
     "DOMContentLoaded",
