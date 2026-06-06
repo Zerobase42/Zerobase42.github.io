@@ -1,4 +1,4 @@
-let db=[];
+export let db=[];
 export async function loadDatabase(){
     const text=await fetch("database.txt")
         .then(r=>r.text());
