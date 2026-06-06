@@ -7,7 +7,7 @@ import {
 } from "./stringProtect.js";
 const HARD_TEXT="궯둞쉞렣";
 
-export function minify(code,removeComments=true){
+export function minify(code,removeComments=true, from=4, to=4){
     const protectedData=protectStrings(code);
     code=protectedData.code;
     const lines=code.split('\n');
@@ -21,13 +21,13 @@ export function minify(code,removeComments=true){
             continue;
         }
         */
-        line=line.replaceAll("    ",HARD_TEXT);
+        line=line.replaceAll(" ".repeat(from),HARD_TEXT);
         for(const op of db){
             line=line.replaceAll(" "+op+" ",op);
             line=line.replaceAll(op+" ",op);
             line=line.replaceAll(" "+op,op);
         }
-        result.push(line.replaceAll(HARD_TEXT,"    "));
+        result.push(line.replaceAll(HARD_TEXT," ".repeat(to)));
     }
     code=result.join("\n");
     if(removeComments){
