@@ -1,5 +1,5 @@
 let db=[];
-async function loadDatabase(){
+export async function loadDatabase(){
     const text=await fetch("database.txt")
         .then(r=>r.text());
     db=text

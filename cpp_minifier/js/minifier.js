@@ -3,6 +3,7 @@ import {
     protectStrings,
     restoreStrings
 } from "./stringProtect.js";
+const HARD_TEXT="궯둞쉞렣";
 
 export function minify(code,removeComments=true){
     const protectedData=protectStrings(code);
