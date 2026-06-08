@@ -6,6 +6,7 @@ import {minify} from "./minifier.js";
 export function minifyCode(){
     if(db.length===0){
         alert("database loading...");
+        console.log("database is not defined. Please check the database.txt.");
         return;
     }
     const code=document.getElementById("input").value;

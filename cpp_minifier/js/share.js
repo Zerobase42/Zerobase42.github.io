@@ -5,12 +5,10 @@ import {
     compress, decompress
 } from "./compress.js";
 
-export async function shareCode(){
-    const input=document.getElementById("input").value;
-    const removeComments=document.getElementById("switch").checked;
-    const minified=minify(input,removeComments);
-    const compressed=await compress(minified);
+export function shareCode(){
+    const code=document.getElementById("input").value;
+    const compressed=compress(code);
     const url=location.origin+location.pathname+"?code="+compressed;
-    await navigator.clipboard.writeText(url);
-    alert("링크가 복사되었습니다.");
+    navigator.clipboard.writeText(url);
+    alert("링크가 복사되었습니다.\nlink :"+url);
 }
