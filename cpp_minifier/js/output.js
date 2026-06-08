@@ -1,5 +1,6 @@
 console.log("output.js loaded");
 
+import {db} from "./database.js";
 import {minify} from "./minifier.js";
 
 export function minifyCode(){
