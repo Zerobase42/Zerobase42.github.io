@@ -10,19 +10,13 @@ const favicons=[
     "favicon/favicon2.ico",
     "favicon/favicon3.ico"
 ];
-
-const favicon=favicons[
-    Math.floor(Math.random()*favicons.length)
-];
-
+const favicon=favicons[Math.floor(Math.random()*favicons.length)];
 let link=document.querySelector("link[rel='icon']");
-
 if(!link){
     link=document.createElement("link");
     link.rel="icon";
     document.head.appendChild(link);
 }
-
 link.href=favicon;
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">

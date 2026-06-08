@@ -1,3 +1,6 @@
+console.log("MAIN START");
+window.onerror=(...a)=>console.log("ERROR",a);
+
 console.log("main.js loaded");
 
 import {loadDatabase}

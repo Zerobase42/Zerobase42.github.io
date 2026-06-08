@@ -1,6 +1,5 @@
 console.log("minifier.js loaded");
 
-import {db} from "./database.js";
 import {
     protectStrings,
     restoreStrings
