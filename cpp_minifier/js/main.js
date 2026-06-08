@@ -66,6 +66,9 @@ window.addEventListener(
                         .scrollTop=this.scrollTop;
                 }
             );
+        document
+            .getElementById("share-btn")
+            .addEventListener("click", shareCode);
         updateLineNumbers();
         updateHighlight();
     }
