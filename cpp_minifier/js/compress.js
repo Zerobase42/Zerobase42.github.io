@@ -1,5 +1,7 @@
 console.log("compress.js loaded");
 
+import base85 from "https://cdn.jsdelivr.net/npm/@alttiri/base85@1.8.0/base85.min.js";
+
 export function compress(text){
     const compressed=pako.gzip(text);
     return encodeURIComponent(base85.encode(compressed));
