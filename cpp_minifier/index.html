@@ -4,21 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>C++ Minifier — Terminal</title>
-<script>
-const favicons=[
-    "favicon/favicon1.ico",
-    "favicon/favicon2.ico",
-    "favicon/favicon3.ico"
-];
-const favicon=favicons[Math.floor(Math.random()*favicons.length)];
-let link=document.querySelector("link[rel='icon']");
-if(!link){
-    link=document.createElement("link");
-    link.rel="icon";
-    document.head.appendChild(link);
-}
-link.href=favicon;
-</script>
+<script>const favicons=["favicon/favicon1.ico","favicon/favicon2.ico","favicon/favicon3.ico"],favicon=favicons[Math.floor(Math.random()*favicons.length)];let link=document.querySelector("link[rel='icon']");link||(link=document.createElement("link"),link.rel="icon",document.head.appendChild(link)),link.href=favicon;</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -27,59 +13,89 @@ link.href=favicon;
 </head>
 <body>
   <a class="back" href="../index.html">← index</a>
+
   <main class="wrap">
     <h1>cpp-minify <span class="cmd">-- v.1.5</span></h1>
-    <div class="window">
+
+    <div class="input-layout">
+
+      <!-- INPUT -->
+      <div class="window input-window">
         <div class="tabbar">
-            <div class="tab active">
-                <span class="lang">●</span>
-                input.cpp
-            </div>
+          <div class="tab active">
+            <span class="lang">●</span>
+            input.cpp
+          </div>
         </div>
+
         <div class="colorscripter-wrapper">
-            <div class="codebox">
-                <div id="lineNumbers">1</div>
-                <div class="editor-container">
-                    <pre id="input-highlight"><code id="input-code" class="language-cpp"></code></pre>
-                    <textarea
-                        id="input"
-                        spellcheck="false"
-                        placeholder="#include &lt;bits/stdc++.h&gt;"
-                    ></textarea>
-                </div>
+          <div class="codebox">
+            <div id="lineNumbers">1</div>
 
+            <div class="editor-container">
+              <pre id="input-highlight"><code id="input-code" class="language-cpp"></code></pre>
+              <textarea
+                id="input"
+                spellcheck="false"
+                placeholder="#include &lt;bits/stdc++.h&gt;"
+              ></textarea>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
+      <!-- CONTROL PANEL -->
+      <div class="controls-panel">
+        <button class="run" id="minify-btn">
+          Minify
+        </button>
+        <button class="run" id="share-btn">
+          Share
+        </button>
+        <label class="toggle">
+          <input type="checkbox" id="switch" checked>
+          <span class="track"></span>
+          <span>
+            <span class="hash">--</span>
+            remove-comments
+          </span>
+        </label>
 
-    <div class="controls">
-     <button class="run" id="minify-btn">Minify</button>
-      <label class="toggle">
-        <input type="checkbox" id="switch" checked>
-        <span class="track"></span>
-        <span><span class="hash">--</span>strip-comments · 주석 삭제</span>
-      </label>
-      <button class="run" id="share-btn">Share</button>
-      <span>click to copy shared link</span>
-    </div>
+        <!-- 추가 스위치 예시 -->
+        <!--
+        <label class="toggle">
+          <input type="checkbox">
+          <span class="track"></span>
+          <span>option 2</span>
+        </label>
+        -->
 
+      </div>
+    </div>
+    <!-- OUTPUT -->
     <h2>Output</h2>
     <div class="window">
       <div class="tabbar">
-        <div class="tab active"><span class="lang">●</span> minify.cpp</div>
+        <div class="tab active">
+          <span class="lang">●</span>
+          minify.cpp
+        </div>
       </div>
       <div class="editor">
-            <div id="outputLineNumbers">1</div>
-            <div class="editor-container output-container">
-                <pre id="output-highlight"><code id="output-code" class="language-cpp"></code></pre>
-            </div>
+        <div id="outputLineNumbers">1</div>
+        <div class="editor-container output-container">
+          <pre id="output-highlight"><code id="output-code" class="language-cpp"></code></pre>
         </div>
+      </div>
     </div>
+    <footer class="footer">
+      문의 :
+      <a class="footer-link"
+        href="https://discord.com/channels/857583541440348170/1500117956577722448"
+        target="_blank">
+        Discord
+      </a>
+    </footer>
   </main>
-  <footer class="footer">
-    문의 : <a class="footer-link" href="https://discord.com/channels/857583541440348170/1500117956577722448" target="_blank">Discord</a>
-  </footer>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/cpp.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
