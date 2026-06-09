@@ -18,6 +18,9 @@ from "./output.js";
 import {shareCode}
 from "./share.js";
 
+import {decompress}
+from "./compress.js";
+
 window.addEventListener(
     "DOMContentLoaded",
     async ()=>{
