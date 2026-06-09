@@ -28,6 +28,7 @@ window.addEventListener(
         const params=new URLSearchParams(location.search);
         const shared=params.get("code");
         if(shared){
+            console.log("Shared code:", shared);
             try{
                 document
                     .getElementById("input")
