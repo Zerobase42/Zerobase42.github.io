@@ -411,3 +411,8 @@ code{
     align-items:center;
     gap:10px;
 }
+#input-code{
+    display:block;
+    margin:0;
+    padding:0;
+}
