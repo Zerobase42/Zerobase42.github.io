@@ -143,10 +143,11 @@ textarea {
     caret-color:var(--text);
     z-index:2;
     font-family:"JetBrains Mono",monospace;
-    font-size:13px;
     resize:none;
     margin:0;
     padding:14px 16px;
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
 }
 .editor-container{
     position:relative;
@@ -272,7 +273,6 @@ h2::before {
     text-align:right;
     color:#888;
     font-family:"JetBrains Mono", monospace;
-    font-size:13px;
     user-select:none;
     overflow:hidden;
     pointer-events:none;
@@ -289,10 +289,12 @@ h2::before {
     overflow:auto;
     background:var(--editor);
     font-family:"JetBrains Mono",monospace;
-    font-size:13px;
     pointer-events:none;
     margin:0;
     padding:14px 16px;
+    white-space:pre-wrap;
+    word-break:break-word;
+    overflow-wrap:anywhere;
 }
 #output-highlight{
     position:absolute;
@@ -300,8 +302,6 @@ h2::before {
     overflow:auto;
     background:var(--editor);
     font-family:"JetBrains Mono", monospace;
-    font-size:13px;
-    line-height:1.7;
     margin:0;
     padding:14px 16px;
     white-space:pre;
@@ -354,6 +354,11 @@ textarea::placeholder,.toggle .hash {
 .hljs{
     line-height:22px;
     font-size:13px;
+}
+#input,
+#input-highlight,
+#output-highlight{
+    tab-size:4;
 }
 pre,
 code{
