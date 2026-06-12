@@ -142,7 +142,6 @@ textarea {
     color:transparent;
     caret-color:var(--text);
     z-index:2;
-    font-family:"JetBrains Mono",monospace;
     resize:none;
     margin:0;
     padding:14px 16px;
@@ -288,7 +287,6 @@ h2::before {
     inset:0;
     overflow:auto;
     background:var(--editor);
-    font-family:"JetBrains Mono",monospace;
     pointer-events:none;
     margin:0;
     padding:14px 16px;
@@ -301,7 +299,6 @@ h2::before {
     inset:0;
     overflow:auto;
     background:var(--editor);
-    font-family:"JetBrains Mono", monospace;
     margin:0;
     padding:14px 16px;
     white-space:pre;
@@ -419,6 +416,7 @@ code{
 #input,
 #input-highlight,
 #input-code,
+#output-highlight,
 .hljs,
 .hljs *{
     font-family:"JetBrains Mono", monospace !important;
