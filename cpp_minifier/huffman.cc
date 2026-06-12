@@ -3,7 +3,9 @@
 #include<queue>
 #include<unordered_map>
 #include<windows.h>
+#include "base85.cpp"
 using namespace std;
+
 //노드 정보
 struct Node{
 	char character;
@@ -27,7 +29,7 @@ public:
 		info.clear();
 		while(!pq.empty())pq.pop();
 	}
-	const unordered_map<char,string>&GetInfo(){
+	const unordered_map<unsigned char,string>&GetInfo(){
 		//허프만 트리로 얻은 알파벳 별 이진수 정보를 가져온다.
 		return info;
 	}
@@ -117,8 +119,8 @@ private:
 		p=nullptr;
 	}
 	Node*root=nullptr;
-	unordered_map<char,int>um;
-	unordered_map<char,string>info;
+	unordered_map<unsigned char,int>um;
+	unordered_map<unsigned char,string>info;
 	priority_queue<Node*,vector<Node*>,cmp>pq;
 };
 int main(int argc,char*argv[]){
@@ -133,32 +135,45 @@ int main(int argc,char*argv[]){
 	HuffmanTree t;
 	t.Create(str);
 	unordered_map<unsigned char,string>info=t.GetInfo();
-	//cout<<"압축할 문자열 : "<<str<<"\n\n";
 	cout<<"이진수 정보 : \n";
 	for(const auto iter:info){
-		cout<<iter.first<<": "<<iter.second<<"\n";
+		cout<<iter.first<<": "<<iter.second<<endl;
 	}
-	//cout<<"\n압축된 정보(비트열): ";
     string bitstream;
     for(const auto ch:str){
-        bitstream+=info[ch];//각 문자에 해당하는 이진수 코드 붙이기
-        //cout<<info[ch]<<' ';
+        bitstream+=info[ch];
     }
     cout<<"\n8비트 단위 변환 결과: \n";
     string outs;
+	Uint8Array enc;
     for(size_t i=0;i<bitstream.size();i+=8){
-        string byteStr=bitstream.substr(i,8);//8비트씩 자르기
+        string byteStr=bitstream.substr(i,8);
         if(byteStr.size()<8){
-            //마지막 블록이 8비트보다 짧으면 패딩 처리
             byteStr.append(8-byteStr.size(),'0');
         }
+		enc.push_back(static_cast<unsigned char>(stoi(byteStr,nullptr,2)));
         unsigned char byteVal=static_cast<unsigned char>(stoi(byteStr,nullptr,2));
         outs+=byteVal;
     }
     cout<<outs<<'\n';
     cout<<"\n길이 비교\n str : "<<str.size()<<" outs : "<<outs.size();
-    cout<<"\n압축률 : "<<(float)outs.size()/(float)str.size()*100<<'%\n';
+    cout<<"\n압축률 : "<<(float)outs.size()/(float)str.size()*100<<"%\n";
     string decoded=t.DecodeFromOuts(outs,str.size());
     cout<<"\n복원된 문자열: "<<decoded;
     cout<<"\n복원 여부 : "<<(bool)(str==decoded)<<'\n';
+/*
+	string encoded=encode(Uint8Array(str.begin(), str.end()), "ascii85");
+	cout<<"\nBase85로 인코딩된 문자열: "<<encoded<<' '<<encoded.size()<<'\n';
+	string decodedBase85=string(decode(encoded, "ascii85").begin(), decode(encoded, "ascii85").end());
+	cout<<"\nBase85로 디코딩된 문자열: "<<decodedBase85<<'\n';
+	cout<<"\n"<<(str==decodedBase85)<<'\n';
+*/
+	string encoded=encode(enc, "ascii85");
+	cout<<"\nBase85로 인코딩된 문자열: "<<encoded<<'\n';
+    Uint8Array decoded85 = decode(encoded, "ascii85");
+    string decodedStr(decoded85.begin(), decoded85.end());
+	cout<<"\nBase85로 디코딩된 문자열: "<<decodedStr<<'\n';
+	cout<<"\nbase85 압축률 : "<<(float)encoded.size()/(float)str.size()*100<<"%\n";
+	cout<<"\n"<<(bool)(outs==decodedStr)<<'\n';
 }
+// 오버라이드(オーバーライド)는 요시다 야세이가 작사, 작곡하고 2023년 11월 29일에 니코니코 동화와 유튜브에 투고한 카사네 테토의 Synthesizer V 오리지널 곡이다. 더불어 요시다 야세이의 전작 사이멀캐스터의 후속작이다.
