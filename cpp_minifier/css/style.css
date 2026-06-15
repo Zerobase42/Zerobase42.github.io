@@ -417,7 +417,21 @@ code{
 #input-highlight,
 #input-code,
 #output-highlight,
+#output-code,
 .hljs,
 .hljs *{
     font-family:"JetBrains Mono", monospace !important;
+}
+.copy-btn{
+    margin-left:auto;
+    background:none;
+    border:1px solid #444;
+    color:#ccc;
+    padding:4px 10px;
+    border-radius:6px;
+    cursor:pointer;
+    font-family:inherit;
+}
+.copy-btn:hover{
+    background:#222;
 }
