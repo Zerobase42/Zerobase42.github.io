@@ -7,7 +7,7 @@ import {
 } from "./stringProtect.js";
 const HARD_TEXT="궯둞쉞렣";
 
-export function minify(code,removeComments=true, from=4, to=4){
+export function minify(code,removeComments=true,removeIndents=false, from=4, to=4){
     const protectedData=protectStrings(code);
     code=protectedData.code;
     const lines=code.split('\n');
@@ -37,6 +37,10 @@ export function minify(code,removeComments=true, from=4, to=4){
         code=code.replace(/\/\/[^\n]*/g,"");
         ///**/주석 제거
         code=code.replace(/\/\*[\s\S]*?\*\//g,"");
+    }
+    if(removeIndents){
+        //인덴트 제거
+        code=code.replace(/^\s+/gm,"");
     }
     //빈 줄 제거
     code=code.replace(/\n\s*\n+/g,"\n");

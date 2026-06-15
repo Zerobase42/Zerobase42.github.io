@@ -62,6 +62,9 @@ window.addEventListener(
             .getElementById("switch")
             .addEventListener("change",minifyCode);
         document
+            .getElementById("remove-indents")
+            .addEventListener("change",minifyCode);
+        document
             .getElementById("output-highlight")
             .addEventListener("scroll",
                 function(){
