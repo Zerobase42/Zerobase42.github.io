@@ -39,7 +39,7 @@ export function minify(code,removeComments=true,flattenCode=false, from=4, to=4)
     }
     if(flattenCode){
         //코드 평탄화
-        code=code.replace(/^(?!#)(.*)\n\s*/gm,"$1");
+        code=code.replace(/^(?!#)\s*(.*?)\s*\n\s*/gm,"$1");
     }
     //빈 줄 제거
     code=code.replace(/\n\s*\n+/g,"\n");
