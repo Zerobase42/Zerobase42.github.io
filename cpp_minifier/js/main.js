@@ -81,13 +81,7 @@ window.addEventListener(
 //=====Output Copy=====
 const outputContainer=document.querySelector(".output-container");
 const outputCode=document.getElementById("output-code");
-//Copy 버튼 생성
-const outputTabbar=document.querySelector("h2 + .window .tabbar");
-const copyBtn=document.createElement("button");
-copyBtn.id="copy-btn";
-copyBtn.className="copy-btn";
-copyBtn.textContent="Copy";
-outputTabbar.appendChild(copyBtn);
+const copyBtn=document.getElementById("copy-btn");
 //클릭 시 포커스
 outputContainer.tabIndex=0;
 outputContainer.addEventListener("click",()=>{
