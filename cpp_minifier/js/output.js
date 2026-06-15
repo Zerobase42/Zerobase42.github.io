@@ -11,8 +11,8 @@ export function minifyCode(){
     }
     const code=document.getElementById("input").value;
     const removeComments=document.getElementById("switch").checked;
-    const removeIndents=document.getElementById("remove-indents").checked;
-    const result=minify(code,removeComments,removeIndents);
+    const flattenCode=document.getElementById("flatten-code").checked;
+    const result=minify(code,removeComments,flattenCode);
     const output=document.getElementById("output-code");
     output.innerHTML=hljs.highlight(result,{language:"cpp"}).value;
     const lines=result.split("\n").length;
