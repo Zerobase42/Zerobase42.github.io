@@ -27,7 +27,9 @@ export function minify(code,removeComments=true, from=4, to=4){
             line=line.replaceAll(op+" ",op);
             line=line.replaceAll(" "+op,op);
         }
-        result.push(line.replaceAll(HARD_TEXT," ".repeat(to)));
+        if(line!==""){
+            result.push(line.replaceAll(HARD_TEXT," ".repeat(to)));
+        }
     }
     code=result.join("\n");
     if(removeComments){

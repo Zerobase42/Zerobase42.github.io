@@ -5,7 +5,6 @@
 #include<windows.h>
 #include "base85.cpp"
 using namespace std;
-
 //노드 정보
 struct Node{
 	char character;
@@ -157,23 +156,26 @@ int main(int argc,char*argv[]){
     }
     cout<<outs<<'\n';
     cout<<"\n길이 비교\n str : "<<str.size()<<" outs : "<<outs.size();
-    cout<<"\n압축률 : "<<(float)outs.size()/(float)str.size()*100<<"%\n";
     string decoded=t.DecodeFromOuts(outs,str.size());
     cout<<"\n복원된 문자열: "<<decoded;
     cout<<"\n복원 여부 : "<<(bool)(str==decoded)<<'\n';
 /*
-	string encoded=encode(Uint8Array(str.begin(), str.end()), "ascii85");
+	string encoded=encode(Uint8Array(str.begin(),str.end()),"ascii85");
 	cout<<"\nBase85로 인코딩된 문자열: "<<encoded<<' '<<encoded.size()<<'\n';
-	string decodedBase85=string(decode(encoded, "ascii85").begin(), decode(encoded, "ascii85").end());
+	string decodedBase85=string(decode(encoded,"ascii85").begin(),decode(encoded,"ascii85").end());
 	cout<<"\nBase85로 디코딩된 문자열: "<<decodedBase85<<'\n';
 	cout<<"\n"<<(str==decodedBase85)<<'\n';
 */
-	string encoded=encode(enc, "ascii85");
+	string encoded=encode(enc,"ascii85");
 	cout<<"\nBase85로 인코딩된 문자열: "<<encoded<<'\n';
-    Uint8Array decoded85 = decode(encoded, "ascii85");
-    string decodedStr(decoded85.begin(), decoded85.end());
-	cout<<"\nBase85로 디코딩된 문자열: "<<decodedStr<<'\n';
-	cout<<"\nbase85 압축률 : "<<(float)encoded.size()/(float)str.size()*100<<"%\n";
+    Uint8Array decoded85=decode(encoded,"ascii85");
+    string decodedStr(decoded85.begin(),decoded85.end());
+	//cout<<"\nBase85로 디코딩된 문자열: "<<decodedStr<<'\n';
 	cout<<"\n"<<(bool)(outs==decodedStr)<<'\n';
+	cout<<"\n원본 크기      : "<<str.size()<<" bytes";
+	cout<<"\n허프만 비트 수 : "<<bitstream.size()<<" bits";
+	cout<<"\n허프만 바이트 수 : "<<outs.size()<<" bytes";
+	cout<<"\n비트 기준 압축률 : "<<100.0*bitstream.size()/(str.size()*8)<<"%";
+	cout<<"\n실제 저장 크기 기준 압축률 : "<<100.0*outs.size()/str.size()<<"%";
+	cout<<"\nBase85 포함 압축률 : "<<100.0*encoded.size()/str.size()<<"%";
 }
-// 오버라이드(オーバーライド)는 요시다 야세이가 작사, 작곡하고 2023년 11월 29일에 니코니코 동화와 유튜브에 투고한 카사네 테토의 Synthesizer V 오리지널 곡이다. 더불어 요시다 야세이의 전작 사이멀캐스터의 후속작이다.
