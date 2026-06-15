@@ -1,18 +1,129 @@
+#include<cmath>
+#include<cstdint>
 #include<iostream>
+#include<stdexcept>
+#include<string>
+#include<vector>
 #include<string>
 #include<queue>
 #include<unordered_map>
 #include<windows.h>
-#include "base85.cpp"
 using namespace std;
-//노드 정보
+static const uint32_t pow2=7225;
+static const uint32_t pow3=614125;
+static const uint32_t pow4=52200625;
+using Uint8Array=vector<uint8_t>;
+Uint8Array charsetToMap(const string&charset){
+    if(charset.size()!=85)throw invalid_argument("Charset length must be 85");
+    Uint8Array ui8a(85);
+    for(size_t i=0;i<85;i++)ui8a[i]=static_cast<uint8_t>(charset[i]);
+    return ui8a;
+}
+Uint8Array ascii85=charsetToMap("!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu");
+Uint8Array z85=charsetToMap("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#");
+const Uint8Array&getMap(const string&charset="z85"){
+    if(charset=="ascii85")return ascii85;
+    if(charset.size()==85){
+        static Uint8Array customMap;
+        customMap=charsetToMap(charset);
+        return customMap;
+    }
+    return z85;
+}
+Uint8Array getReverseMap(const Uint8Array&mapOrig){
+    Uint8Array revMap(128,0);
+    for(size_t i=0;i<mapOrig.size();i++){
+        uint8_t charCode=mapOrig[i];
+        if(charCode<128)revMap[charCode]=static_cast<uint8_t>(i);
+    }
+    return revMap;
+}
+string encode(const Uint8Array&ui8a,const string&charset="z85"){
+    const Uint8Array&charMap=getMap(charset);
+    size_t remain=ui8a.size()%4;
+    size_t last5Length=remain?remain+1:0;
+    size_t length=static_cast<size_t>(ceil(ui8a.size()*5.0/4.0));
+    Uint8Array target(length);
+    size_t to=ui8a.size()/4;
+    for(size_t i=0;i<to;i++){
+        uint32_t num=0;
+        num|=static_cast<uint32_t>(ui8a[i*4])<<24;
+        num|=static_cast<uint32_t>(ui8a[i*4+1])<<16;
+        num|=static_cast<uint32_t>(ui8a[i*4+2])<<8;
+        num|=static_cast<uint32_t>(ui8a[i*4+3]);
+        for(int k=4;k>=0;k--){
+            target[k+i*5]=charMap[num%85];
+            num/=85;
+        }
+    }
+    if(remain){
+        size_t lastPartIndex=to*4;
+        Uint8Array lastPart(4,0);
+        for(size_t i=0;i<remain;i++){
+            lastPart[i]=ui8a[lastPartIndex+i];
+        }
+        uint32_t num=0;
+        num|=static_cast<uint32_t>(lastPart[0])<<24;
+        num|=static_cast<uint32_t>(lastPart[1])<<16;
+        num|=static_cast<uint32_t>(lastPart[2])<<8;
+        num|=static_cast<uint32_t>(lastPart[3]);
+        size_t offset=target.size()-last5Length-1;
+        for(int i=4;i>=0;i--){
+            uint8_t value=charMap[num%85];
+            num/=85;
+            if(i<static_cast<int>(last5Length)){
+                size_t index=offset+i+1;
+                target[index]=value;
+            }
+        }
+    }
+    return string(target.begin(),target.end());
+}
+Uint8Array decode(const string&base85,const string&charset="z85"){
+    const Uint8Array&map=getMap(charset);
+    Uint8Array revMap=getReverseMap(map);
+    Uint8Array base85ab(base85.begin(),base85.end());
+    size_t pad=(5-(base85ab.size()%5))%5;
+    size_t outSize=(static_cast<size_t>(ceil(base85ab.size()/5.0))*4)-pad;
+    Uint8Array ints(outSize);
+    size_t i=0,fullBlocks=(base85ab.size()+4)/5;
+    for(;i+1<fullBlocks;i++){
+        uint32_t c1=revMap[base85ab[i*5+4]];
+        uint32_t c2=revMap[base85ab[i*5+3]]*85;
+        uint32_t c3=revMap[base85ab[i*5+2]]*pow2;
+        uint32_t c4=revMap[base85ab[i*5+1]]*pow3;
+        uint32_t c5=revMap[base85ab[i*5]]*pow4;
+        uint32_t val=c1+c2+c3+c4+c5;
+        ints[i*4]=static_cast<uint8_t>((val>>24)&0xFF);
+        ints[i*4+1]=static_cast<uint8_t>((val>>16)&0xFF);
+        ints[i*4+2]=static_cast<uint8_t>((val>>8)&0xFF);
+        ints[i*4+3]=static_cast<uint8_t>(val&0xFF);
+    }
+    uint8_t lCh=map[map.size()-1];
+    Uint8Array lastPart(base85ab.begin()+i*5,base85ab.end());
+    lastPart.insert(lastPart.end(),4,lCh);
+    uint32_t c1=revMap[lastPart[4]];
+    uint32_t c2=revMap[lastPart[3]]*85;
+    uint32_t c3=revMap[lastPart[2]]*pow2;
+    uint32_t c4=revMap[lastPart[1]]*pow3;
+    uint32_t c5=revMap[lastPart[0]]*pow4;
+    uint32_t val=c1+c2+c3+c4+c5;
+    uint8_t decoded[4]{
+        static_cast<uint8_t>((val>>24)&0xFF),
+        static_cast<uint8_t>((val>>16)&0xFF),
+        static_cast<uint8_t>((val>>8)&0xFF),
+        static_cast<uint8_t>(val&0xFF)
+    };
+    for(size_t j=0;j<4-pad;j++){
+        ints[i*4+j]=decoded[j];
+    }
+    return ints;
+}
 struct Node{
 	char character;
 	int frequency;
 	Node*left,*right;
 };
-//우선순위 큐 정렬을 위한 구조체
-//빈도수를 기준으로 최소힙으로 정렬한다.
 struct cmp{
 	bool operator()(Node*A,Node*B){
 		return A->frequency>B->frequency;
@@ -21,7 +132,6 @@ struct cmp{
 class HuffmanTree{
 public:
 	~HuffmanTree(){
-		//동적할당 받은 노드들을 지운다.
 		ReleaseTree(root);
 		root=nullptr;
 		um.clear();
@@ -29,18 +139,11 @@ public:
 		while(!pq.empty())pq.pop();
 	}
 	const unordered_map<unsigned char,string>&GetInfo(){
-		//허프만 트리로 얻은 알파벳 별 이진수 정보를 가져온다.
 		return info;
 	}
-	//압축할 문자열 정보를 바탕으로 허프만 트리를 만들어
-	//이진수 정보들을 만든다.
 	void Create(const string&str){
-		//해쉬 테이블을 이용해 빈도수를 기록
 		for(const auto iter:str)++um[iter];	
 		for(const auto iter:um){
-			//해쉬 테이블에서 하나씩 꺼내 
-			//정보를 노드에 저장 후
-			//우선순위 큐에 집어 넣는다.
 			Node*newNode=new Node;
 			newNode->left=nullptr;
 			newNode->right=nullptr;
@@ -48,32 +151,25 @@ public:
 			newNode->frequency=iter.second;
 			pq.push(newNode);
 		}
-		//우선순위 큐 정보를 바탕으로 트리를 만든다.
 		MakeTree();
-		//트리를 순회하면서 이진수 정보를 입력받는다.
 		string tmp="";
 		FindTree(root,tmp);
 	}
 	string DecodeFromOuts(const string&outs,size_t originalLength){
-        //outs → 비트열 변환
         string bitstream;
         for(unsigned char c:outs){
-            //각 바이트를 8비트 이진 문자열로 변환
             for(int i=7;i>=0;--i){
                 bitstream+=((c>>i)&1)?'1':'0';
             }
         }
-        //허프만 트리를 따라가며 디코딩
         string result;
         Node*current=root;
         for(char bit:bitstream){
             if(bit=='0')current=current->left;
             else current=current->right;
-            //리프 노드 도달 시 문자 복원
             if(current->left==nullptr&&current->right==nullptr){
                 result+=current->character;
                 current=root;
-                //원래 문자열 길이만큼 복원되면 중단(패딩 제거)
                 if(result.size()==originalLength)break;
             }
         }
@@ -81,9 +177,6 @@ public:
     }
 private:
 	void MakeTree(){
-		//우선 순위 큐를 이용해 빈도수가 작은 순으로 
-		//2개씩 꺼내 두 노드를 담는 노드를 만들어
-		//두 노드의 빈도수를 합치고 큐에 다시 집어 넣는다.
 		int limit=pq.size()-1;
 		for(int i=0;i<limit;++i){
 			Node*newNode=new Node;
@@ -93,24 +186,17 @@ private:
 			newNode->frequency=newNode->right->frequency+newNode->left->frequency;
 			pq.push(newNode);
 		}
-		//이 작업을 마치면 우선순위 큐에는 한가지 원소만 남는다.
-		//그것이 허프만 트리의 Root 노드가 된다.
 		root=pq.top();
 	}
 	void FindTree(Node*p,string str){
 		if(p==nullptr)return;
-		//왼쪽은 0,오른쪽은 1
-		//순회하면서 정보를 더해간다.
 		FindTree(p->left,str+'0');
 		FindTree(p->right,str+'1');
-		//알파벳 정보를 가진 노드를 만날때까지 순회한다.
 		if(p->character!=0){
 			info[p->character]=str;
 		}
 	}
 	void ReleaseTree(Node*p){
-		//후위 순화를 하면서 동적할당 했던 노드들을
-		//할당 해제 시켜준다.
 		if(p==nullptr)return;
 		ReleaseTree(p->left);
 		ReleaseTree(p->right);
@@ -125,11 +211,6 @@ private:
 int main(int argc,char*argv[]){
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
-    /*if(argc!=2){
-        cerr<<"wrong input";
-        return 0;
-    }
-	string str(argv[1]);*/
 	string str;getline(cin,str);
 	HuffmanTree t;
 	t.Create(str);
@@ -155,17 +236,16 @@ int main(int argc,char*argv[]){
         outs+=byteVal;
     }
     cout<<outs<<'\n';
+    cout<<"\n길이 비교\n str : "<<str.size()<<" outs : "<<outs.size();
+    cout<<"\n압축률 : "<<(float)outs.size()/(float)str.size()*100<<"%\n";
     string decoded=t.DecodeFromOuts(outs,str.size());
+    cout<<"\n복원된 문자열: "<<decoded;
+    cout<<"\n복원 여부 : "<<(bool)(str==decoded)<<'\n';
 	string encoded=encode(enc,"ascii85");
 	cout<<"\nBase85로 인코딩된 문자열: "<<encoded<<'\n';
     Uint8Array decoded85=decode(encoded,"ascii85");
     string decodedStr(decoded85.begin(),decoded85.end());
-	//cout<<"\nBase85로 디코딩된 문자열: "<<decodedStr<<'\n';
+	cout<<"\nBase85로 디코딩된 문자열: "<<decodedStr<<'\n';
+	cout<<"\nbase85 압축률 : "<<(float)encoded.size()/(float)str.size()*100<<"%\n";
 	cout<<"\n"<<(bool)(outs==decodedStr)<<'\n';
-	cout<<"\n원본 크기                  : "<<str.size()<<" bytes";
-	cout<<"\n허프만 비트 수             : "<<bitstream.size()<<" bits ("<<bitstream.size()/8.0<<" bytes)";
-	cout<<"\n허프만 바이트 수           : "<<outs.size()<<" bytes";
-	cout<<"\n비트 기준 압축률           : "<<100.0*bitstream.size()/(str.size()*8)<<"%";
-	cout<<"\n실제 저장 크기 기준 압축률 : "<<100.0*outs.size()/str.size()<<"%";
-	cout<<"\nBase85 포함 압축률         : "<<100.0*encoded.size()/str.size()<<"%";
 }
