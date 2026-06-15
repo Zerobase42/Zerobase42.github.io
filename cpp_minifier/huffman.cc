@@ -155,27 +155,17 @@ int main(int argc,char*argv[]){
         outs+=byteVal;
     }
     cout<<outs<<'\n';
-    cout<<"\n길이 비교\n str : "<<str.size()<<" outs : "<<outs.size();
     string decoded=t.DecodeFromOuts(outs,str.size());
-    cout<<"\n복원된 문자열: "<<decoded;
-    cout<<"\n복원 여부 : "<<(bool)(str==decoded)<<'\n';
-/*
-	string encoded=encode(Uint8Array(str.begin(),str.end()),"ascii85");
-	cout<<"\nBase85로 인코딩된 문자열: "<<encoded<<' '<<encoded.size()<<'\n';
-	string decodedBase85=string(decode(encoded,"ascii85").begin(),decode(encoded,"ascii85").end());
-	cout<<"\nBase85로 디코딩된 문자열: "<<decodedBase85<<'\n';
-	cout<<"\n"<<(str==decodedBase85)<<'\n';
-*/
 	string encoded=encode(enc,"ascii85");
 	cout<<"\nBase85로 인코딩된 문자열: "<<encoded<<'\n';
     Uint8Array decoded85=decode(encoded,"ascii85");
     string decodedStr(decoded85.begin(),decoded85.end());
 	//cout<<"\nBase85로 디코딩된 문자열: "<<decodedStr<<'\n';
 	cout<<"\n"<<(bool)(outs==decodedStr)<<'\n';
-	cout<<"\n원본 크기      : "<<str.size()<<" bytes";
-	cout<<"\n허프만 비트 수 : "<<bitstream.size()<<" bits";
-	cout<<"\n허프만 바이트 수 : "<<outs.size()<<" bytes";
-	cout<<"\n비트 기준 압축률 : "<<100.0*bitstream.size()/(str.size()*8)<<"%";
+	cout<<"\n원본 크기                  : "<<str.size()<<" bytes";
+	cout<<"\n허프만 비트 수             : "<<bitstream.size()<<" bits ("<<bitstream.size()/8.0<<" bytes)";
+	cout<<"\n허프만 바이트 수           : "<<outs.size()<<" bytes";
+	cout<<"\n비트 기준 압축률           : "<<100.0*bitstream.size()/(str.size()*8)<<"%";
 	cout<<"\n실제 저장 크기 기준 압축률 : "<<100.0*outs.size()/str.size()<<"%";
-	cout<<"\nBase85 포함 압축률 : "<<100.0*encoded.size()/str.size()<<"%";
+	cout<<"\nBase85 포함 압축률         : "<<100.0*encoded.size()/str.size()<<"%";
 }
