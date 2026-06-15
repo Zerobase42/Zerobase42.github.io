@@ -24,7 +24,5 @@ export function minifyCode(){
     outputHighlight.style.height=h+"px";
     outputNums.style.height=h+"px";
     document.querySelector(".output-container").style.maxHeight=h+"px";
-    console.log("input code length:", code.length);
-    console.log("minified code length:", result.length);
-    console.log("reduction ratio:", ((code.length - result.length) / code.length * 100).toFixed(2) + "%");
+    console.log("input code length:", code.length,"\nminified code length:", result.length,"\nreduction ratio:", ((code.length - result.length) / code.length * 100).toFixed(2) + "%");
 }
