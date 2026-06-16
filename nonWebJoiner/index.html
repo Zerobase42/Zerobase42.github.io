@@ -6,34 +6,43 @@
 <title>Web Viewer</title>
 
 <style>
-html, body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
+*{
+    box-sizing:border-box;
 }
 
-body {
-    display: flex;
-    flex-direction: column;
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
 }
 
-#toolbar {
-    display: flex;
-    gap: 8px;
-    padding: 8px;
-    border-bottom: 1px solid #ccc;
+body{
+    display:flex;
+    flex-direction:column;
 }
 
-#url {
-    flex: 1;
-    font-size: 16px;
-    padding: 8px;
+#toolbar{
+    display:flex;
+    gap:8px;
+    padding:8px;
+    border-bottom:1px solid #ddd;
 }
 
-iframe {
-    flex: 1;
-    width: 100%;
-    border: none;
+#url{
+    flex:1;
+    padding:8px;
+    font-size:16px;
+}
+
+button{
+    padding:8px 16px;
+    cursor:pointer;
+}
+
+iframe{
+    flex:1;
+    width:100%;
+    border:none;
 }
 </style>
 </head>
@@ -42,36 +51,47 @@ iframe {
 <div id="toolbar">
     <input
         id="url"
-        type="text"
         value="https://example.com"
         placeholder="https://..."
     >
-    <button id="go">이동</button>
+    <button id="go">Go</button>
 </div>
 
-<iframe
-    id="viewer"
-    src="https://example.com">
-</iframe>
+<iframe id="viewer"></iframe>
 
 <script>
-const urlInput = document.getElementById("url");
-const viewer = document.getElementById("viewer");
+const url=document.getElementById("url");
+const viewer=document.getElementById("viewer");
 
-function loadPage() {
-    let url = urlInput.value.trim();
+function openPage(){
+    let link=url.value.trim();
 
-    if (!/^https?:\/\//.test(url)) {
-        url = "https://" + url;
+    if(!/^https?:\/\//.test(link)){
+        link="https://"+link;
     }
 
-    viewer.src = url;
+    viewer.src=link;
+
+    history.replaceState(
+        {},
+        "",
+        "?url="+encodeURIComponent(link)
+    );
 }
 
-document.getElementById("go").onclick = loadPage;
-urlInput.addEventListener("keydown", e => {
-    if (e.key === "Enter") loadPage();
+document.getElementById("go").onclick=openPage;
+
+url.addEventListener("keydown",e=>{
+    if(e.key==="Enter") openPage();
 });
+
+const params=new URLSearchParams(location.search);
+
+if(params.has("url")){
+    url.value=params.get("url");
+}
+
+openPage();
 </script>
 
 </body>
