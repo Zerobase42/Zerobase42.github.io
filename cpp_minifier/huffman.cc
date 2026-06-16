@@ -9,9 +9,9 @@
 #include<unordered_map>
 #include<windows.h>
 using namespace std;
-static const uint32_t pow2=7225;
-static const uint32_t pow3=614125;
-static const uint32_t pow4=52200625;
+static const uint32_t pow2=7225; // 85^2
+static const uint32_t pow3=614125; // 85^3
+static const uint32_t pow4=52200625; // 85^4
 using Uint8Array=vector<uint8_t>;
 Uint8Array charsetToMap(const string&charset){
     if(charset.size()!=85)throw invalid_argument("Charset length must be 85");
