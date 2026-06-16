@@ -62,35 +62,86 @@ iframe{
 </iframe>
 
 <script>
-const url=document.getElementById("url");
-const viewer=document.getElementById("viewer");
+const url = document.getElementById("url");
+const viewer = document.getElementById("viewer");
 
-function openPage(){
-    let link=url.value.trim();
+const notice = document.createElement("div");
+notice.id = "notice";
+notice.style.display = "none";
+notice.style.padding = "10px";
+notice.style.background = "#fff3cd";
+notice.style.color = "#856404";
+notice.style.borderBottom = "1px solid #ffeeba";
+notice.textContent =
+    "페이지를 표시할 수 없습니다. 이 사이트는 iframe 삽입을 차단했을 수 있습니다.";
 
-    if(!/^https?:\/\//.test(link)){
-        link="https://"+link;
+document.body.insertBefore(notice, viewer);
+
+let timeoutId;
+
+function openPage() {
+    let link = url.value.trim();
+
+    if (!link) return;
+
+    if (!/^https?:\/\//i.test(link)) {
+        link = "https://" + link;
     }
 
-    viewer.src=link;
+    notice.style.display = "none";
 
-    history.replaceState(
-        {},
-        "",
-        "?url="+encodeURIComponent(link)
-    );
+    clearTimeout(timeoutId);
+
+    viewer.src = "about:blank";
+
+    setTimeout(() => {
+        viewer.src = link;
+
+        timeoutId = setTimeout(() => {
+            notice.style.display = "block";
+        }, 5000);
+
+        history.replaceState(
+            {},
+            "",
+            "?url=" + encodeURIComponent(link)
+        );
+    }, 50);
 }
 
-document.getElementById("go").onclick=openPage;
+viewer.addEventListener("load", () => {
+    clearTimeout(timeoutId);
 
-url.addEventListener("keydown",e=>{
-    if(e.key==="Enter") openPage();
+    try {
+        const frameUrl = viewer.contentWindow.location.href;
+
+        if (
+            frameUrl === "about:blank" ||
+            frameUrl === "about:srcdoc"
+        ) {
+            notice.style.display = "block";
+        } else {
+            notice.style.display = "none";
+        }
+    } catch (e) {
+        // 외부 사이트는 Same-Origin Policy 때문에 접근 불가.
+        // 로드 이벤트가 발생했다면 일단 성공한 것으로 간주.
+        notice.style.display = "none";
+    }
 });
 
-const params=new URLSearchParams(location.search);
+document.getElementById("go").addEventListener("click", openPage);
 
-if(params.has("url")){
-    url.value=params.get("url");
+url.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+        openPage();
+    }
+});
+
+const params = new URLSearchParams(location.search);
+
+if (params.has("url")) {
+    url.value = params.get("url");
 }
 
 openPage();
