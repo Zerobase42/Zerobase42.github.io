@@ -37,44 +37,53 @@ class HuffmanTree{
     void Create(const string&str,int maxN=3){
         for(int n=1;n<=maxN;++n)
             CountTokens(str,n);
-        vector<pair<string,int>>tokenInfo;
-        for(const auto&iter:um){
-            int freq=iter.second;
-            int len=(int)iter.first.size();
+        vector<TokenInfo>candidates;
+        for(const auto&p:um){
+            int len=(int)p.first.size();
+            int freq=p.second;
             int gain=(len-1)*freq;
-            int score=freq+gain;
-            tokenInfo.push_back(iter);
-            if(len==1){
-                Node*newNode=new Node;
-                newNode->token=iter.first;
-                newNode->frequency=freq;
-                newNode->left=nullptr;
-                newNode->right=nullptr;
-                pq.push(newNode);
+            candidates.push_back({p.first,
+                                   freq,
+                                   gain});
+        }
+        sort(
+            candidates.begin(),
+            candidates.end(),
+            [](const TokenInfo&a,const TokenInfo&b){
+                if(a.gain!=b.gain)
+                    return a.gain>b.gain;
+                return a.freq>b.freq;
+            });
+        constexpr int MAX_MULTI_TOKEN=128;
+        unordered_map<string,bool>selected;
+        int multiCount=0;
+        for(const auto&t:candidates){
+            if(t.token.size()==1){
+                selected[t.token]=true;
                 continue;
             }
-            if(gain<6)
+            if(t.gain<10)
                 continue;
-            Node*newNode=new Node;
-            newNode->token=iter.first;
-            newNode->frequency=score;
-            newNode->left=nullptr;
-            newNode->right=nullptr;
-            pq.push(newNode);
+            if(multiCount>=MAX_MULTI_TOKEN)
+                break;
+            selected[t.token]=true;
+            ++multiCount;
         }
-        sort(tokenInfo.begin(),tokenInfo.end(),
-            [](const auto&a,const auto&b){
-                 if(a.second!=b.second)
-                     return a.second>b.second;
-                 return a.first.size()>b.first.size();
-            });
-        cout<<"\n=== 토큰 빈도 ===\n \"문자열\" freq gain score\n";
-        for(const auto&p:tokenInfo){
-            int freq=p.second;
-            int len=(int)p.first.size();
-            int gain=(len-1)*freq;
-            int score=freq+gain;
-            cout<<'"'<<p.first<<"\"-> "<<freq<<' '<<gain<<' '<<score<<'\n';
+        cout<<"\n=== 선택된 토큰 ===\n";
+        for(const auto&t:candidates){
+            if(!selected[t.token])
+                continue;
+            cout
+                <<'"'<<t.token<<'"'
+                <<" freq="<<t.freq
+                <<" gain="<<t.gain
+                <<'\n';
+            Node*node=new Node;
+            node->token=t.token;
+            node->frequency=t.freq;
+            node->left=nullptr;
+            node->right=nullptr;
+            pq.push(node);
         }
         MakeTree();
         string tmp;
