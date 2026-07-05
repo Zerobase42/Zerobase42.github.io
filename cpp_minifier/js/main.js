@@ -119,6 +119,9 @@ window.addEventListener(
             .getElementById("remove-indents")
             .addEventListener("change",minifyCode);
         document
+            .getElementById("undef-macro")
+            .addEventListener("change",minifyCode);
+        document
             .getElementById("output-highlight")
             .addEventListener("scroll",
                 function(){

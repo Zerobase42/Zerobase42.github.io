@@ -9,9 +9,9 @@
 #include<unordered_map>
 #include<windows.h>
 using namespace std;
-static const uint32_t pow2=7225; // 85^2
-static const uint32_t pow3=614125; // 85^3
-static const uint32_t pow4=52200625; // 85^4
+static const uint32_t pow2=7225;
+static const uint32_t pow3=614125;
+static const uint32_t pow4=52200625;
 using Uint8Array=vector<uint8_t>;
 Uint8Array charsetToMap(const string&charset){
     if(charset.size()!=85)throw invalid_argument("Charset length must be 85");
@@ -120,9 +120,10 @@ Uint8Array decode(const string&base85,const string&charset="z85"){
     return ints;
 }
 struct Node{
-	char character;
-	int frequency;
-	Node*left,*right;
+    unsigned char character;
+    int frequency;
+    Node*left;
+    Node*right;
 };
 struct cmp{
 	bool operator()(Node*A,Node*B){
@@ -175,6 +176,35 @@ public:
         }
         return result;
     }
+    string CreateArchive(const string&compressed,uint32_t originalLength){
+        string treeData;
+        SerializeTree(root,treeData);
+        string archive;
+        uint32_t treeLen=treeData.size();
+        archive.append(reinterpret_cast<char*>(&originalLength),sizeof(originalLength));
+        archive.append(reinterpret_cast<char*>(&treeLen),sizeof(treeLen));
+        archive+=treeData;
+        archive+=compressed;
+        return archive;
+    }
+    string DecodeArchive(const string&archive){
+        ReleaseTree(root);
+        root=nullptr;
+        size_t pos=0;
+        uint32_t originalLength=*reinterpret_cast<const uint32_t*>(archive.data()+pos);
+        pos+=4;
+        uint32_t treeLen=*reinterpret_cast<const uint32_t*>(archive.data()+pos);
+        pos+=4;
+        string treeData=archive.substr(pos,treeLen);
+        pos+=treeLen;
+        string compressed=archive.substr(pos);
+        size_t treePos=0;
+        root=DeserializeTree(treeData,treePos);
+        return DecodeFromOuts(
+            compressed,
+            originalLength
+        );
+    }
 private:
 	void MakeTree(){
 		int limit=pq.size()-1;
@@ -189,13 +219,15 @@ private:
 		root=pq.top();
 	}
 	void FindTree(Node*p,string str){
-		if(p==nullptr)return;
-		FindTree(p->left,str+'0');
-		FindTree(p->right,str+'1');
-		if(p->character!=0){
-			info[p->character]=str;
-		}
-	}
+        if(p==nullptr)return;
+        if(p->left==nullptr&&p->right==nullptr){
+            if(str.empty())str="0";
+            info[p->character]=str;
+            return;
+        }
+        FindTree(p->left,str+'0');
+        FindTree(p->right,str+'1');
+    }
 	void ReleaseTree(Node*p){
 		if(p==nullptr)return;
 		ReleaseTree(p->left);
@@ -203,7 +235,36 @@ private:
 		delete p;
 		p=nullptr;
 	}
-	Node*root=nullptr;
+    void SerializeTree(Node*node,string&out){
+        if(!node)return;
+        if(node->left==nullptr&&
+            node->right==nullptr){
+            out.push_back(1);
+            out.push_back(node->character);
+            return;
+        }
+        out.push_back(0);
+        SerializeTree(node->left,out);
+        SerializeTree(node->right,out);
+    }
+    Node*DeserializeTree(const string&data,size_t&pos){
+        if(pos>=data.size())
+            return nullptr;
+        unsigned char type=data[pos++];
+        Node*node=new Node;
+        node->left=nullptr;
+        node->right=nullptr;
+        node->frequency=0;
+        if(type==1){
+            node->character=data[pos++];
+            return node;
+        }
+        node->character=0;
+        node->left=DeserializeTree(data,pos);
+        node->right=DeserializeTree(data,pos);
+        return node;
+    }
+    Node*root=nullptr;
 	unordered_map<unsigned char,int>um;
 	unordered_map<unsigned char,string>info;
 	priority_queue<Node*,vector<Node*>,cmp>pq;
@@ -238,14 +299,41 @@ int main(int argc,char*argv[]){
     cout<<outs<<'\n';
     cout<<"\n길이 비교\n str : "<<str.size()<<" outs : "<<outs.size();
     cout<<"\n압축률 : "<<(float)outs.size()/(float)str.size()*100<<"%\n";
-    string decoded=t.DecodeFromOuts(outs,str.size());
-    cout<<"\n복원된 문자열: "<<decoded;
-    cout<<"\n복원 여부 : "<<(bool)(str==decoded)<<'\n';
-	string encoded=encode(enc,"ascii85");
-	cout<<"\nBase85로 인코딩된 문자열: "<<encoded<<'\n';
-    Uint8Array decoded85=decode(encoded,"ascii85");
-    string decodedStr(decoded85.begin(),decoded85.end());
-	cout<<"\nBase85로 디코딩된 문자열: "<<decodedStr<<'\n';
-	cout<<"\nbase85 압축률 : "<<(float)encoded.size()/(float)str.size()*100<<"%\n";
-	cout<<"\n"<<(bool)(outs==decodedStr)<<'\n';
+    string archive=t.CreateArchive(outs,str.size());
+    cout<<"\narchive size : "<<archive.size()<<'\n';
+    Uint8Array archiveBytes(
+        archive.begin(),
+        archive.end());
+    string archive85=encode(
+        archiveBytes,
+        "ascii85");
+    cout<<"\nArchive(Base85):\n"
+        <<archive85<<'\n';
+    cout<<"\narchive85 size : "
+        <<archive85.size()<<'\n';
+    Uint8Array decodedArchiveBytes=
+        decode(
+            archive85,
+            "ascii85");
+    string decodedArchive(
+        decodedArchiveBytes.begin(),
+        decodedArchiveBytes.end());
+    string decoded=
+        t.DecodeArchive(decodedArchive);
+    cout<<"\n복원된 문자열 : "
+        <<decoded
+        <<'\n';
+    cout<<"\n복원 여부 : "
+        <<(decoded==str)
+        <<'\n';
+    cout<<"\narchive 압축률 : "
+        <<100.0*
+                archive.size()/
+                str.size()
+        <<"%\n";
+    cout<<"\narchive85 압축률 : "
+        <<100.0*
+                archive85.size()/
+                str.size()
+        <<"%\n";
 }

@@ -34,17 +34,14 @@ class HuffmanTree{
     const unordered_map<string,string>&GetInfo(){
         return info;
     }
-    void Create(const string&str,int maxN=3){
+    void Create(const string&str,int maxN=4){
         for(int n=1;n<=maxN;++n)
             CountTokens(str,n);
         vector<TokenInfo>candidates;
         for(const auto&p:um){
             int len=(int)p.first.size();
             int freq=p.second;
-            int gain=(len-1)*freq;
-            candidates.push_back({p.first,
-                                   freq,
-                                   gain});
+            candidates.push_back({p.first,freq,(len-1)*freq});
         }
         sort(
             candidates.begin(),
@@ -54,33 +51,32 @@ class HuffmanTree{
                     return a.gain>b.gain;
                 return a.freq>b.freq;
             });
-        constexpr int MAX_MULTI_TOKEN=128;
         unordered_map<string,bool>selected;
-        int multiCount=0;
         for(const auto&t:candidates){
             if(t.token.size()==1){
                 selected[t.token]=true;
                 continue;
             }
-            if(t.gain<10)
-                continue;
-            if(multiCount>=MAX_MULTI_TOKEN)
-                break;
+            if(t.gain<6)continue;
             selected[t.token]=true;
-            ++multiCount;
         }
-        cout<<"\n=== 선택된 토큰 ===\n";
-        for(const auto&t:candidates){
-            if(!selected[t.token])
-                continue;
-            cout
-                <<'"'<<t.token<<'"'
-                <<" freq="<<t.freq
-                <<" gain="<<t.gain
-                <<'\n';
+        unordered_map<string,int>actualFreq;
+        BuildActualFrequency(
+            str,
+            selected,
+            actualFreq);
+        vector<pair<string,int>>freqList(actualFreq.begin(),actualFreq.end());
+        sort(freqList.begin(),freqList.end(),
+            [](const auto&a,const auto&b){
+                if(a.second!=b.second)return a.second>b.second;
+                return a.first.size()>b.first.size();
+            });
+        cout<<"\n=== 실제 사용 빈도 ===\n";
+        for(const auto&p:freqList){
+            cout<<'"'<<p.first<<'"'<<" -> "<<p.second<<'\n';
             Node*node=new Node;
-            node->token=t.token;
-            node->frequency=t.freq;
+            node->token=p.first;
+            node->frequency=p.second;
             node->left=nullptr;
             node->right=nullptr;
             pq.push(node);
@@ -157,6 +153,35 @@ class HuffmanTree{
     unordered_map<string,string>info;
     priority_queue<Node*,vector<Node*>,cmp>pq;
     Node*root=nullptr;
+    void BuildActualFrequency(const string&str,const unordered_map<string,bool>&selected,unordered_map<string,int>&actualFreq){
+        size_t maxLen=1;
+        for(const auto&p:selected){
+            maxLen=max(maxLen,p.first.size());
+        }
+        size_t i=0;
+        while(i<str.size()){
+            bool found=false;
+            for(size_t len=min(maxLen,str.size()-i);
+                len>=1;
+                --len){
+                string token=str.substr(i,len);
+                auto it=selected.find(token);
+                if(it!=selected.end()){
+                    ++actualFreq[token];
+                    i+=len;
+                    found=true;
+                    break;
+                }
+                if(len==1)
+                    break;
+            }
+            if(!found){
+                string token(1,str[i]);
+                ++actualFreq[token];
+                ++i;
+            }
+        }
+    }
     void CountTokens(const string&str,int n){
         for(size_t i=0;i+n<=str.size();++i){
             string token=str.substr(i,n);

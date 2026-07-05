@@ -5,8 +5,9 @@ import {
     protectStrings,
     restoreStrings
 } from "./stringProtect.js";
+import {undef_macro} from "./undef_marco.js";
 const HARD_TEXT="궯둞쉞렣";
-export function minify(code,removeComments=true,flattenCode=false, from=4, to=4){
+export function minify(code,removeComments=true,flattenCode=false,undefMacro=false, from=4, to=4){
     const protectedData=protectStrings(code);
     code=protectedData.code;
     const lines=code.split('\n');
@@ -44,5 +45,8 @@ export function minify(code,removeComments=true,flattenCode=false, from=4, to=4)
     //빈 줄 제거
     code=code.replace(/\n\s*\n+/g,"\n");
     code=restoreStrings(code,protectedData.strings);
+    if(undefMacro){
+        code=undef_macro(code);
+    }
     return code;
 }
