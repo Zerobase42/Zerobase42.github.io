@@ -13,10 +13,15 @@ export function undef_macro(code){
         ?code.split(/\r?\n/)
         :code;
     let res="";
-    function parent_active(){
-        if(!active.length)return true;
-        const v=active[active.length-1];
-        return v===PASS?PASS:v;
+    function merge_state(parent, cond) {
+        if (parent === false) return false;
+        if (parent === PASS || cond === PASS) return PASS;
+        return parent && cond;
+    }
+    function parent_active() {
+        if (!active.length) return true;
+
+        return active[active.length - 1];
     }
     function expand(text){
         let prev;
@@ -36,51 +41,44 @@ export function undef_macro(code){
     //false->조건 거짓
     //PASS->알 수 없는 매크로가 있으므로 평가하지 않음
     function eval_if(expr){
-        expr=expr.trim();
-        //defined(MACRO)
-        expr=expr.replace(
-            /defined\s*\(\s*([A-Za-z_]\w*)\s*\)/g,
-            (_,name)=>
-                Object.prototype.hasOwnProperty.call(defines,name)
-                    ?"1"
-                    :"0"
-        );
-        //defined MACRO
-        expr=expr.replace(
-            /defined\s+([A-Za-z_]\w*)/g,
-            (_,name)=>
-                Object.prototype.hasOwnProperty.call(defines,name)
-                    ?"1"
-                    :"0"
-        );
-        expr=expand(expr);
-        let unknown=false;
-        expr=expr.replace(/\b[A-Za-z_]\w*\b/g,name=>{
-            if(Object.prototype.hasOwnProperty.call(defines,name))
-                return defines[name];
-            //JS 예약어는 그대로 둔다.
-            if(
-                name==="true"||
-                name==="false"||
-                name==="null"
-            )
-                return name;
-            //선언되지 않은 전처리 매크로
-            //(__linux__,__cplusplus 등)
-            unknown=true;
-            return name;
-        });
-        if(unknown)
-            return PASS;
-        try{
-            return !!Function(
-                `"use strict";return(${expr});`
-            )();
-        }catch{
+        function expand_defined_only(expr){
+            return expr.replace(/\b[A-Za-z_]\w*\b/g, t => {
+                if (Object.prototype.hasOwnProperty.call(defines, t))
+                    return defines[t];
+                return t;
+            });
+        }
+        expr = expr.trim();
+
+        // 1. defined 처리
+        expr = expr.replace(/defined\s*\(\s*([A-Za-z_]\w*)\s*\)/g,
+            (_,n)=>defines[n] ? "1" : "0");
+
+        expr = expr.replace(/defined\s+([A-Za-z_]\w*)/g,
+            (_,n)=>defines[n] ? "1" : "0");
+
+        // 2. ONLY defined macros expand
+        expr = expand_defined_only(expr);
+
+        // 3. unknown detection (여기가 핵심)
+        const tokens = expr.match(/[A-Za-z_]\w*/g) || [];
+
+        for (const t of tokens) {
+            if (t === "true" || t === "false") continue;
+
+            // 숫자로 이미 변환된 건 제외
+            if (!/^\d+$/.test(t)) {
+                return PASS; // unknown 존재 → 즉시 PASS
+            }
+        }
+
+        // 4. safe eval
+        try {
+            return Boolean(Function(`"use strict"; return (${expr});`)());
+        } catch {
             return PASS;
         }
     }
-    let res="";
     for(const line of lines){
         const s=line.trimStart();
         if(s.startsWith("#define")){
@@ -109,109 +107,193 @@ export function undef_macro(code){
             delete functionLike[name];
             continue;
         }
-        if(s.startsWith("#ifdef")){
-            const name=s.split(/\s+/)[1];
-            const cond=Object.prototype.hasOwnProperty.call(defines,name);
-            active.push(parent_active()===PASS?PASS:parent_active()&&cond);
-            taken.push(cond);
-            continue;
-        }
-        if(s.startsWith("#ifndef")){
-            const name=s.split(/\s+/)[1];
-            const cond=!Object.prototype.hasOwnProperty.call(defines,name);
-            active.push(parent_active()===PASS?PASS:parent_active()&&cond);
-            taken.push(cond);
-            continue;
-        }
-        if(
-            s.startsWith("#if")&&
-            !s.startsWith("#ifdef")&&
-            !s.startsWith("#ifndef")
-        ){
-            const cond=eval_if(s.slice(3));
-            if(cond===PASS){
+        if (s.startsWith("#ifdef")) {
+            const name = s.split(/\s+/)[1];
+
+           if (!Object.prototype.hasOwnProperty.call(defines, name)) {
                 active.push(PASS);
                 taken.push(PASS);
-                res+=line+"\n";
-            }else{
-                active.push(parent_active()&&cond);
-                taken.push(cond);
-            }
-            continue;
-        }
-        if(s.startsWith("#elif")){
-            if(active[active.length-1]===PASS){
-                res+=line+"\n";
+                res += line + "\n";
                 continue;
             }
-            const parent=
-                active.length>=2
-                    ?active[active.length-2]
-                    :true;
-            if(taken[taken.length-1]){
-                active[active.length-1]=false;
-            }else{
-                const cond=eval_if(s.slice(5));
-                if(cond===PASS){
-                    active[active.length-1]=PASS;
-                    res+=line+"\n";
-                }else{
-                    active[active.length-1]=parent&&cond;
-                    if(cond)
-                        taken[taken.length-1]=true;
+
+            active.push(merge_state(parent_active(), true));
+            taken.push(true);
+            continue;
+        }
+        if (s.startsWith("#ifndef")) {
+            const name = s.split(/\s+/)[1];
+
+            if (!Object.prototype.hasOwnProperty.call(defines, name)) {
+                active.push(PASS);
+                taken.push(PASS);
+                res += line + "\n";
+                continue;
+            }
+
+            active.push(false);
+            taken.push(true);
+            continue;
+        }
+        if (
+            s.startsWith("#if") &&
+            !s.startsWith("#ifdef") &&
+            !s.startsWith("#ifndef")
+        ) {
+            const cond = eval_if(s.slice(3));
+
+            if (cond === PASS) {
+                if (cond === PASS) {
+                    active[active.length - 1] = PASS;
+                    taken[taken.length - 1] = PASS;
+                    res += line + "\n";
+                }
+
+                active.push(merge_state(parent_active(), cond));
+                taken.push(cond);
+
+                continue;
+            }
+        }
+        if (s.startsWith("#elif")) {
+
+            if (active[active.length - 1] === PASS) {
+                res += line + "\n";
+                continue;
+            }
+
+            const parent =
+                active.length >= 2
+                    ? active[active.length - 2]
+                    : true;
+
+            if (taken[taken.length - 1]) {
+                active[active.length - 1] = false;
+            } else {
+                const cond = eval_if(s.slice(5));
+
+                if (cond === PASS) {
+                    active[active.length - 1] = PASS;
+                    taken[active.length - 1] = PASS;
+                    res += line + "\n";
+                } else {
+                    active[active.length - 1] = parent && cond;
+                    if (cond)
+                        taken[taken.length - 1] = true;
                 }
             }
+
             continue;
         }
-        if(s.startsWith("#else")){
-            if(active[active.length-1]===PASS){
-                res+=line+"\n";
+        if (s.startsWith("#else")) {
+
+            if (active[active.length - 1] === PASS) {
+                res += line + "\n";
                 continue;
             }
-            const parent=
-                active.length>=2
-                    ?active[active.length-2]
-                    :true;
-            if(taken[taken.length-1]){
-                active[active.length-1]=false;
-            }else{
-                active[active.length-1]=parent;
-                taken[taken.length-1]=true;
+
+            const parent =
+                active.length >= 2
+                    ? active[active.length - 2]
+                    : true;
+
+            if (taken[taken.length - 1]) {
+                active[active.length - 1] = false;
+            } else {
+                active[active.length - 1] = parent;
+                taken[taken.length - 1] = true;
             }
+
             continue;
         }
-        if(s.startsWith("#endif")){
-            if(active[active.length-1]===PASS)
-                res+=line+"\n";
+        if (s.startsWith("#endif")) {
+
+            if (active[active.length - 1] === PASS)
+                res += line + "\n";
+
             active.pop();
             taken.pop();
+
             continue;
         }
         const state=parent_active();
-        if(state===PASS){
-            //평가하지 않는 전처리 블록 내부
-            //객체형 매크로만 치환하고 나머지는 그대로 출력
-            const out=line.replace(/\b[A-Za-z_]\w*\b/g,token=>{
-                if(Object.prototype.hasOwnProperty.call(functionLike,token))
+        if (state !== false) {
+            const out = line.replace(/\b[A-Za-z_]\w*\b/g, token => {
+                if (Object.prototype.hasOwnProperty.call(functionLike, token))
                     return token;
-                if(Object.prototype.hasOwnProperty.call(defines,token))
+
+                if (Object.prototype.hasOwnProperty.call(defines, token))
                     return expand(defines[token]);
+
                 return token;
             });
-            res+=out+"\n";
+
+            res += out + "\n";
         }
-        else if(state){
-            //활성 블록
-            const out=line.replace(/\b[A-Za-z_]\w*\b/g,token=>{
-                if(Object.prototype.hasOwnProperty.call(functionLike,token))
-                    return token;
-                if(Object.prototype.hasOwnProperty.call(defines,token))
-                    return expand(defines[token]);
-                return token;
-            });
-            res+=out+"\n";
-        }
-        //state===false 이면 출력하지 않음
     }
     return res;
+}
+
+const __LOCAL__=false;
+if(__LOCAL__){
+    console.log(undef_macro(`
+#define A 1
+#define B 2
+#define C A+B
+
+// TEST 1: basic macro expansion
+int t1 = A + B;   // expected: 3
+
+// TEST 2: recursive expansion
+int t2 = C;       // expected: 3
+
+// TEST 3: if true branch
+#if A == 1
+int t3 = 10;      // expected: 10
+#endif
+
+// TEST 4: if false branch
+#if A == 0
+int t4 = 100;
+#endif
+
+// TEST 5: undefined macro should be PASS
+#if __linux__
+int t5 = 999;     // expected: unchanged block
+#endif
+
+// TEST 6: mixed known + unknown => PASS
+#if A == 1 && __cplusplus
+int t6 = 111;
+#endif
+
+// TEST 7: ifdef defined
+#ifdef A
+int t7 = 7;       // expected: 7
+#endif
+
+// TEST 8: ifndef defined (should skip body)
+#ifndef A
+int t8 = 888;
+#endif
+
+// TEST 9: complex expression
+#if A + B == 3
+int t9 = 9;       // expected: 9
+#endif
+
+// TEST 10: nested-like logic simulation
+#if A == 1
+#if B == 2
+int t10 = 10;     // expected: 10
+#endif
+#endif
+
+// TEST 11: unknown macro in middle => PASS whole line
+#if A == __unknown_macro__
+int t11 = 1111;
+#endif
+
+// TEST 12: raw macro usage in code
+int t12 = A + C + 1;  // expected: 1 + 3 + 1 = 5`))
 }
