@@ -13,7 +13,9 @@ export function minifyCode(){
     const removeComments=document.getElementById("switch").checked;
     const flattenCode=document.getElementById("flatten-code").checked;
     const undefMacro=document.getElementById("undef-macro").checked;
+    // 여기 위에 변수 넣어서 minify 함수 호출
     const result=minify(code,removeComments,flattenCode,undefMacro);
+    // ^^^ 일단 minify 수정하고 여기다가 옵션 변수 넣기
     const output=document.getElementById("output-code");
     output.innerHTML=hljs.highlight(result,{language:"cpp"}).value;
     const lines=result.split("\n").length;

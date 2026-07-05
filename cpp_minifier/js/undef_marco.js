@@ -39,9 +39,32 @@ function eval_if(expr) {
     }
 }
 
+function expand(text) {
+    let prev;
+
+    do {
+        prev = text;
+        text = text.replace(/\b[A-Za-z_]\w*\b/g, m =>
+            Object.prototype.hasOwnProperty.call(defines, m)
+                ? defines[m]
+                : m
+        );
+    } while (text !== prev);
+
+    return text;
+}
+
 export function undef_macro(code) {
+    const defines = {};
+
+    const active = [];
+    const taken = [];
+    const lines = typeof code === "string"
+        ? code.split(/\r?\n/)
+        : code;
+
     let res = "";
-    for (const line of code) {
+    for (const line of lines) {
         const s = line.trimStart();
 
         if (s.startsWith("#define")) {
@@ -66,7 +89,7 @@ export function undef_macro(code) {
 
         if (s.startsWith("#ifdef")) {
             const name = s.split(/\s+/)[1];
-            const cond = defines.hasOwnProperty(name);
+            const cond = Object.prototype.hasOwnProperty.call(defines, name);
             active.push(parent_active() && cond);
             taken.push(cond);
             continue;
@@ -74,7 +97,7 @@ export function undef_macro(code) {
 
         if (s.startsWith("#ifndef")) {
             const name = s.split(/\s+/)[1];
-            const cond = !defines.hasOwnProperty(name);
+            const cond = !Object.prototype.hasOwnProperty.call(defines, name);
             active.push(parent_active() && cond);
             taken.push(cond);
             continue;
@@ -123,14 +146,6 @@ export function undef_macro(code) {
         }
 
         if (parent_active()) {
-            function expand(token) {
-                const vis = new Set();
-                while (defines.hasOwnProperty(token) && !vis.has(token)) {
-                    vis.add(token);
-                    token = defines[token];
-                }
-                return token;
-            }
 
             const out = line.replace(/\b[A-Za-z_]\w*\b/g, (match) => expand(match));
             res += out + "\n";
