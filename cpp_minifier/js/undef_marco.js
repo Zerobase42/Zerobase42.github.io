@@ -1,9 +1,5 @@
 console.log("undef_macro.js loaded");
 
-function parent_active() {
-    return active.length ? active[active.length - 1] : true;
-}
-
 function eval_if(expr) {
     expr = expr.trim();
 
@@ -59,7 +55,9 @@ export function undef_macro(code) {
     const lines = typeof code === "string"
         ? code.split(/\r?\n/)
         : code;
-
+    function parent_active() {
+        return active.length ? active[active.length - 1] : true;
+    }
     let res = "";
     for (const line of lines) {
         const s = line.trimStart();
