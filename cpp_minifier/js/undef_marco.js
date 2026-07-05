@@ -1,52 +1,5 @@
 console.log("undef_macro.js loaded");
 
-function eval_if(expr) {
-    expr = expr.trim();
-
-    expr = expr.replace(/&&/g, " && ");
-    expr = expr.replace(/\|\|/g, " || ");
-    expr = expr.replace(/!(?!=)/g, " ! ");
-
-    // Replace logical operators to JavaScript equivalents
-    expr = expr.replace(/&&/g, "&&");
-    expr = expr.replace(/\|\|/g, "||");
-    expr = expr.replace(/!(?!=)/g, "!");
-
-    // Replace identifiers with their defined values or 0
-    expr = expr.replace(/\b[A-Za-z_]\w*\b/g, (name) => {
-        if (name === "and" || name === "or" || name === "not") {
-            // These are Python operators, convert to JS equivalents
-            if (name === "and") return "&&";
-            if (name === "or") return "||";
-            if (name === "not") return "!";
-        }
-        return defines.hasOwnProperty(name) ? defines[name] : "0";
-    });
-
-    try {
-        // Use Function constructor to safely evaluate expression
-        // Only allow boolean context
-        return Boolean(Function(`"use strict"; return (${expr});`)());
-    } catch (e) {
-        return false;
-    }
-}
-
-function expand(text) {
-    let prev;
-
-    do {
-        prev = text;
-        text = text.replace(/\b[A-Za-z_]\w*\b/g, m =>
-            Object.prototype.hasOwnProperty.call(defines, m)
-                ? defines[m]
-                : m
-        );
-    } while (text !== prev);
-
-    return text;
-}
-
 export function undef_macro(code) {
     const defines = {};
 
@@ -55,9 +8,56 @@ export function undef_macro(code) {
     const lines = typeof code === "string"
         ? code.split(/\r?\n/)
         : code;
+    
     function parent_active() {
         return active.length ? active[active.length - 1] : true;
     }
+    function expand(text) {
+        let prev;
+
+        do {
+            prev = text;
+            text = text.replace(/\b[A-Za-z_]\w*\b/g, m =>
+                Object.prototype.hasOwnProperty.call(defines, m)
+                    ? defines[m]
+                    : m
+            );
+        } while (text !== prev);
+
+        return text;
+    }
+    function eval_if(expr) {
+        expr = expr.trim();
+
+        expr = expr.replace(/&&/g, " && ");
+        expr = expr.replace(/\|\|/g, " || ");
+        expr = expr.replace(/!(?!=)/g, " ! ");
+
+        // Replace logical operators to JavaScript equivalents
+        expr = expr.replace(/&&/g, "&&");
+        expr = expr.replace(/\|\|/g, "||");
+        expr = expr.replace(/!(?!=)/g, "!");
+
+        // Replace identifiers with their defined values or 0
+        expr = expr.replace(/\b[A-Za-z_]\w*\b/g, (name) => {
+            if (name === "and" || name === "or" || name === "not") {
+                // These are Python operators, convert to JS equivalents
+                if (name === "and") return "&&";
+                if (name === "or") return "||";
+                if (name === "not") return "!";
+            }
+            return defines.hasOwnProperty(name) ? defines[name] : "0";
+        });
+
+        try {
+            // Use Function constructor to safely evaluate expression
+            // Only allow boolean context
+            return Boolean(Function(`"use strict"; return (${expr});`)());
+        } catch (e) {
+            return false;
+        }
+    }
+
     let res = "";
     for (const line of lines) {
         const s = line.trimStart();
