@@ -12,7 +12,8 @@ export function minifyCode(){
     const code=document.getElementById("input").value;
     const removeComments=document.getElementById("switch").checked;
     const flattenCode=document.getElementById("flatten-code").checked;
-    const result=minify(code,removeComments,flattenCode);
+    const undefMacro=document.getElementById("undef-macro").checked;
+    const result=minify(code,removeComments,flattenCode,undefMacro);
     const output=document.getElementById("output-code");
     output.innerHTML=hljs.highlight(result,{language:"cpp"}).value;
     const lines=result.split("\n").length;
