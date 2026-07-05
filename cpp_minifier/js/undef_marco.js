@@ -1,4 +1,8 @@
 console.log("undef_macro.js loaded");
+// 전처리 매크로를 처리하는 함수
+// #define, #undef, #ifdef, #ifndef, #if, #elif, #else, #endif를 처리
+// 정의된 매크로를 기반으로 코드에서 매크로를 치환
+// 조건부 컴파일 블록을 평가하여 활성화된 코드만 출력
 export function undef_macro(code){
     const defines=Object.create(null);
     const functionLike=Object.create(null);
