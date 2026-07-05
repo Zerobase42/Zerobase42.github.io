@@ -1,5 +1,7 @@
 console.log("MAIN START");
-window.onerror=(...a)=>console.log("ERROR",a);
+window.addEventListener("error", e => {
+    console.error(e.error ?? e.message);
+});
 
 console.log("main.js loaded");
 
@@ -61,16 +63,14 @@ copyBtn.addEventListener("click",async()=>{
     }
 });
 //Ctrl+C도 강제 복사
-outputContainer.addEventListener("keydown",async(e)=>{
-    if(e.ctrlKey&&e.key.toLowerCase()==="c"){
-        const selected=window.getSelection().toString();
-        if(selected.length){
-            e.preventDefault();
-            try{
-                await navigator.clipboard.writeText(selected);
-            }catch(err){
-                console.error(err);
-            }
+outputContainer.addEventListener("copy",async(e)=>{
+    const selected=window.getSelection().toString();
+    if(selected.length){
+        e.preventDefault();
+        try{
+            await navigator.clipboard.writeText(selected);
+        }catch(err){
+            console.error(err);
         }
     }
 });
@@ -112,15 +112,14 @@ window.addEventListener(
         document
             .getElementById("minify-btn")
             .addEventListener( "click",minifyCode);
-        document
-            .getElementById("switch")
-            .addEventListener("change",minifyCode);
-        document
-            .getElementById("remove-indents")
-            .addEventListener("change",minifyCode);
-        document
-            .getElementById("undef-macro")
-            .addEventListener("change",minifyCode);
+        [
+            "switch",
+            "flatten-code",
+            "undef-macro"
+        ].forEach(id =>
+            document.getElementById(id)
+                .addEventListener("change", minifyCode)
+        );
         document
             .getElementById("output-highlight")
             .addEventListener("scroll",

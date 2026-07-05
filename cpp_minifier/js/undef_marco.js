@@ -1,7 +1,4 @@
-const defines = {};
-
-const active = [];
-const taken = [];
+console.log("undef_macro.js loaded");
 
 function parent_active() {
     return active.length ? active[active.length - 1] : true;
