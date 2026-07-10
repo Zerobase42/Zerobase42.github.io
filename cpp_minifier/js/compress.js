@@ -7,6 +7,6 @@ export function compress(text){
     return encodeURIComponent(base85.encode(compressed));
 }
 export function decompress(encoded){
-    const compressed=base85.decode(decodeURIComponent(encoded));
+    const compressed=base85.decode(encoded);
     return pako.ungzip(compressed,{to:"string"});
 }
