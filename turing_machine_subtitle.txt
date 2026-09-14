@@ -1,0 +1,130 @@
+Hello everyone!
+I normally don’t voiceover my videos, but this time the subtitles would be too hard to follow
+So first of all, if you’re still not supporting at the link in description –
+– please either do this now or promise me you won’t forget till the end of this video.
+It’s free and takes maybe 30 seconds.
+Anyways, this is my Turing machine.
+I assume you know what is it but if you don’t – it’s a machine that has a tape with symbols it can read, and then it raplaces them with other ones.
+It can also move the tape left or right.
+As you can see, the program is done and the machine has stopped.
+Now we’re gonna explain how it works.
+For this reason I make a quick overview
+First, the machine does stuff based on the symbol it has read and the state it has in some registers inside.
+The state is a variable, and at the beginning of the program it needs to have some initial value, say 000.
+Then, the machine is ready to read the symbol from the tape.
+After doing this it has already collected all the input information,
+and in order to do anything based on it, it uses something we’ll call a truth table (instruction table).
+The truth table has rows for each combination of state and symbol,
+and each row contains a 7-bit instruction.
+So it’s basically a source code of the machine.
+Now based on the first 5 bits of the instruction,
+the machine goes into a new state and prints a new symbol in place of the on it has read before.
+Then it moves the tape left or right, depending on the bit 6 fo the insturction…
+…and if bit 7 is high, it extis the program.
+If the program continues, the cycle starts over again.
+The symbol reader is connected to 2 of the registers.
+(the remaining ones are for the state)
+When the reading pin goes up, it sets the register;
+when it goes down – it resets it
+Like this:
+Set
+And reset
+The mechanism first resets both registers by pulling both pins up…
+…and then it sets the ones with a “1” on their part of the symbol.
+First we reset all of them,
+Then we set the ones we need to.
+When the reader is not reading, the pins are in a neutral position.
+At that time, the registers just remember the last state they’ve had.
+Now the grey register got set and not the blue one.
+Here’s a close-up at the mechanism.
+It’s actually very simple and does some redundant things, like lifting the reading pins to reset the registers.
+It costs quiet much energy because they’re heavy,
+but it’s not a pig problem since there are only 2 pins and not 7 like for reading the instruction.
+There’s also a similar mechanism at the display
+These 5 pins are the previously mentioned registers.
+They’ve been set based on the symbol and the current state,
+and only the ones set to “1” are a part of the mechansim.
+And how does this mechanism work?
+Well,
+ the pins are pushed while searching for the proper address on the back of the truth table.
+When they find it, the searching process stops.
+The addresses look physically like this.
+Yes, these are binary numbers from 0 to 31 (=2⁵-1).
+I mean, a binary 1 is represented with a hole which may feel strange but the sensor actually detects the holes
+Like this:
+It always finds the 1st matching address,
+i.e. the smallest binary number with 1’s in the places of the searching pins.
+(this is what I mean btw)
+This address is also the correct one, meaning it has 1’s at the places with the pins and 0’s everywhere else.
+Indeed – this is the smallest number the sensor will find because replacing in it any subset of 0’s with 1’s
+would make its value greater by a sum of some powers of 2
+So the first address that is found always has holes exactly where the pins are.
+These 2 switches trigger the searching process
+It’s performed iff both are in the ON position
+Here I made an animation
+The one on the left is called “searching switch #1” and it’s connected to a mechanism…
+…that activates the sensor.
+Here’s a close-up.
+The sensor is connected to another mechanism,
+This mechanism is connected to searching switch #2, i.e. the switch on the right
+When the address gets found, it turns this switch off and the table stops moving.
+Here you can see the reading pins.
+Each of them has a handle, so that it can be… handled.
+Each one is also connected to an axle.
+3 of the axles are connected to the remaining registers.
+And they’re also connected to the display.
+2 reading pins are for rewriting the symbol…
+…and 1 decides whether to move the tape left or right.
+However, this was only a simplified version of the mechansim. It doesn’t have all the functionality.
+For example, the registers 0 and 2 do get set right…
+…now…
+…but register 1 still deosn’t get re-set.
+You can see it’s constatntly in the same posistion as at the begining
+The only way to reset it is to pull the orange pin up, like now.
+Did you see that?
+Other registers can also be reset by pulling other pins.
+We’ll now update the mechanism.
+Now the pins that haven’t fallen get pulled up.
+Now this is the mechanism that is actually used.
+The mechanism is controlled by this axle.
+Searching switch #2 has also a second function.
+When it’s on, rotating the input doesn’t do anything visible here…
+…but when we turn it off…
+…the big gear start rotating.
+(I made this acronym cause we’re gonna use it frequently lol)
+During MPoC the searching process is off,
+so we’ll connect this to searching switch #1 –
+– the one that disables the searching “sensor”.
+Now the sensor gets disabled as soon as it’s not needed.
+This is important because the registers can’t be set when it’s enabled.
+As you can see I’m trying to move them and nothing happens.
+But now everything works just fine.
+Searching switch #2 gets switched off when searching is done, so at some point it needs to get switched back on.
+But this would normally stop MPoC!
+That’s why there’s a latch switch.
+It keeps the output on even after searching switch #2 stops powering it.
+It’s activated by the last table-reading pin.
+So these 3 axles control the functions of the machine during MPoC.
+But, what controls them?
+After a short disassembly we see the mechanism with the orange part.
+This part can switch between the 3 functions
+Everything is controlled by a stepper mechanism.
+To show how it’s so precise I made another animation.
+Namely, the outputs of the gearbox always make exactly 3 rotations.
+That’s because the gearbox has extra space to “catch” the gear.
+The gear always ends up in the same position,
+because each cycle the gearbox makes a whole number of quarter-turns
+Namely we still need to home the truth table.
+That’s why while the tape gets moved, this happens:
+This is the “table-homing switch”, and it makes the table-driving axle rotate in the opposite direction.
+There’s a “sensor” at the end of the truth table’s bed.
+It activates a really fast-working mechanism.
+Yes, that’s it.
+In case you didn’t notice I’ll make a replay
+The table-homing switch is connected to the mechanism of searching switch #1.
+Because of this, searching starts only if MPoC is over AND the table is in the home position
+i.e. both of the requierments are met.
+OK, I think that’s all,
+so tu sum everything up I made this cool-looking diagram. Enjoy.
+In case you actually forgot to support, you can do this now.
+I also would be grateful if you subscribed to my channel. Anyways, Bye ☺
