@@ -1,11 +1,99 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <script>
-    const VERSION = 3;   // ← 여기 숫자만 바꾸면 됩니다
-    location.replace(`ver_${VERSION}.html`);
-  </script>
-</head>
-<body></body>
-</html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>전자기 유도 실험 : 코일 회전에 따른 유도 기전력 변화</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f6fb;--card:#fff;--tx:#1d2433;--mu:#69728a;--bd:#dde1ea;--ac:#2563eb;--grid:#e3e7ef;--sc:#fafbff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12151c;--card:#1b2029;--tx:#e8ebf2;--mu:#98a1b3;--bd:#2c3340;--ac:#6ea0ff;--grid:#2a303c;--sc:#161a22}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#12151c;--card:#1b2029;--tx:#e8ebf2;--mu:#98a1b3;--bd:#2c3340;--ac:#6ea0ff;--grid:#2a303c;--sc:#161a22}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Noto Sans KR","Malgun Gothic",sans-serif;line-height:1.5}
+.w{max-width:1400px;margin:0 auto;padding:14px}
+h1{font-size:18px;margin:0 0 8px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}.cols>*{min-width:0}@media(max-width:860px){.cols{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-top:10px}
+.desc{color:var(--mu);font-size:13px;margin:0 2px}
+canvas{width:100%;display:block;border-radius:10px;background:var(--sc)}
+#ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px 18px;margin-top:12px}
+.r label{font-size:13px;color:var(--mu);display:block}
+.bg{display:flex;gap:6px;flex-wrap:wrap}.bg button{min-width:52px;padding:7px 12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:8px;cursor:pointer;font-size:14px}.bg button.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.bar button,.bar select{padding:9px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:14px;cursor:pointer}
+.bar .go{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}
+.bar button:disabled{opacity:.5}
+#st{margin-left:auto;font-size:14px;font-variant-numeric:tabular-nums}
+#lg{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{display:flex;align-items:center;gap:6px;border:1px solid var(--bd);border-radius:20px;padding:2px 4px 2px 8px;font-size:12px}
+.chip i{width:12px;height:12px;border-radius:50%}
+.chip b{cursor:pointer;color:var(--mu);padding:0 5px}
+.note{font-size:12px;color:var(--mu);margin:0 0 8px;line-height:1.45}
+</style></head><body><div class="w">
+<h1>⚡ 전자기 유도 실험 : 코일 회전에 따른 유도 기전력 변화</h1>
+<div class="desc">코일 안쪽 중심에 자석을 두고, 코일을 자석 중심으로 회전시킵니다.</div>
+<div class="cols"><div class="card"><canvas id="sc" style="height:240px"></canvas>
+<div id="ctl"></div>
+<div class="bar">
+<button class="go" id="go">▶ 실험 시작</button>
+<select id="sp"><option value="1" selected>실제 속도</option><option value=".25">1/4 슬로우</option><option value=".1">1/10 슬로우</option></select>
+<span id="st">ε = 0</span></div></div>
+<div class="card"><div class="note">ε = −N·dΦ/dt. 자석은 코일 중심에 고정되어 있고 코일이 회전하면 코일을 지나는 자기선속이 Φ = Φ₀cos(ωt)로 변하므로 ε = N·Φ₀·ω·sin(ωt)가 됩니다(Φ₀ = B·V / 2a, 자석은 점 쌍극자로 계산, ω = 2π·rpm/60). 코일 그림의 도선 겹수는 감은 횟수 N에 비례합니다(N/20겹). 코일이 3바퀴 도는 동안 600개 지점을 동일한 시간 간격으로 측정하며, 실험을 반복하면 다른 색으로 누적되어 겹쳐 비교됩니다.</div>
+<b style="font-size:14px">시간 – 유도 기전력 그래프</b>
+<canvas id="gr" style="height:330px;margin-top:8px"></canvas>
+<div id="lg"></div>
+<div class="bar" style="margin-top:8px"><button id="clr">그래프 전체 지우기</button></div></div>
+</div></div>
+<script>
+const V=Math.PI*1e-4*0.02,NS=600,pal=['#e11d48','#2563eb','#16a34a','#f59e0b','#9333ea','#0891b2','#ea580c','#db2777'];
+const CTL=[['x','조작변인 : 코일의 회전 속도 (rpm)',[150,300,450,600]],['B','통제변인 : 자석의 세기 (T)',[1,2,3,4]],['N','통제변인 : 코일의 감은 횟수 (회)',[200,400,600,800]],['a','통제변인 : 코일의 반지름 (cm)',[2,4,6,8]]];
+let P={x:300,B:1,N:200,a:4},runs=[],cur=null,running=false,cnt=0;
+const $=i=>document.getElementById(i),sc=$('sc'),gr=$('gr'),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function fmt(v){const a=Math.abs(v);return a>=1?v.toFixed(2)+' V':a>=1e-3?(v*1e3).toFixed(2)+' mV':(v*1e6).toFixed(1)+' μV'}
+function model(){const w=P.x*Math.PI/30,f=P.B*V/(2*P.a/100);return{dur:6*Math.PI/w,emf:t=>P.N*f*w*Math.sin(w*t)}}
+function row(k,label,opts){const d=document.createElement('div');d.className='r';
+ d.innerHTML=`<label>${label}</label><div class="bg">${opts.map(o=>`<button data-v="${o}">${o}</button>`).join('')}</div>`;
+ const bs=d.querySelectorAll('button'),sel=()=>bs.forEach(b=>b.classList.toggle('on',+b.dataset.v===P[k]));
+ bs.forEach(b=>b.onclick=()=>{if(running)return;P[k]=+b.dataset.v;sel();idle()});sel();return d}
+CTL.forEach(c=>$('ctl').append(row(c[0],c[1],c[2])));
+function fit(c){const d=devicePixelRatio||1;c._w=c.clientWidth;c._h=c.clientHeight;c.width=c._w*d;c.height=c._h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x}
+let sx,gx;
+function magnet(x,cx,cy,w,h){x.fillStyle='#e11d48';x.fillRect(cx-w/2,cy-h/2,w,h/2);x.fillStyle='#2563eb';x.fillRect(cx-w/2,cy,w,h/2);
+ x.fillStyle='#fff';x.font='bold 13px sans-serif';x.textAlign='center';x.fillText('N',cx,cy-h/4+5);x.fillText('S',cx,cy+h/4+5)}
+function coil(x,cx,cy,rx,ry,rot){x.save();x.translate(cx,cy);x.rotate(rot);x.strokeStyle='#d97706';x.lineWidth=1.3;
+ const n=Math.max(1,Math.round(P.N/20)),sp=1.6,y0=-(n-1)*sp/2;for(let i=0;i<n;i++){x.beginPath();x.ellipse(0,y0+i*sp,rx,ry,0,0,7);x.stroke()}x.restore()}
+function drawScene(t,emf,peak){const x=sx,W=sc._w,H=sc._h;x.clearRect(0,0,W,H);
+ const rx=Math.max(P.a/100*W*5.7,40),th=P.x*Math.PI/30*t;
+ coil(x,W/2,H/2,rx,rx*.22,th);magnet(x,W/2,H/2,26,50);
+ const al=peak?Math.min(1,Math.abs(emf)/peak):0;x.fillStyle=`rgba(250,204,21,${.12+.88*al})`;x.strokeStyle=css('--mu');
+ x.beginPath();x.arc(W-34,34,16,0,7);x.fill();x.stroke();x.fillStyle=css('--tx');x.font='12px sans-serif';x.textAlign='right';x.fillText('t = '+(t*1000).toFixed(0)+' ms',W-60,38)}
+function drawGraph(){const x=gx,W=gr._w,H=gr._h,l=64,r=12,tp=12,b=34;x.clearRect(0,0,W,H);
+ let tm=0,ym=0;runs.forEach(R=>{tm=Math.max(tm,R.dur);R.e.forEach(v=>ym=Math.max(ym,Math.abs(v)))});
+ if(!runs.length){tm=.3;ym=1e-3}ym*=1.1;const k=10**Math.floor(Math.log10(ym)),f=ym/k;ym=(f<=1?1:f<=2?2:f<=5?5:10)*k;
+ const[u,us]=ym>=1?['V',1]:ym>=1e-3?['mV',1e3]:['μV',1e6];
+ const X=t=>l+(W-l-r)*t/tm,Y=v=>tp+(H-tp-b)*(1-(v+ym)/(2*ym));
+ x.font='11px sans-serif';x.lineWidth=1;
+ for(let i=-2;i<=2;i++){const v=ym*i/2,y=Y(v);x.strokeStyle=css('--grid');x.beginPath();x.moveTo(l,y);x.lineTo(W-r,y);x.stroke();x.fillStyle=css('--mu');x.textAlign='right';x.fillText((v*us).toFixed(us==1?2:1),l-6,y+4)}
+ for(let i=0;i<=5;i++){const t=tm*i/5,xx=X(t);x.strokeStyle=css('--grid');x.beginPath();x.moveTo(xx,tp);x.lineTo(xx,H-b);x.stroke();x.fillStyle=css('--mu');x.textAlign='center';x.fillText((t*1000).toFixed(0),xx,H-b+14)}
+ x.textAlign='center';x.fillStyle=css('--mu');x.fillText('시간 (ms)',(l+W-r)/2,H-4);x.save();x.translate(12,H/2);x.rotate(-Math.PI/2);x.fillText('기전력 ε ('+u+')',0,0);x.restore();
+ x.strokeStyle=css('--mu');x.beginPath();x.moveTo(l,Y(0));x.lineTo(W-r,Y(0));x.stroke();
+ runs.forEach(R=>{x.strokeStyle=R.color;x.lineWidth=2;x.beginPath();for(let i=0;i<R.n;i++){const px=X(R.t[i]),py=Y(R.e[i]);i?x.lineTo(px,py):x.moveTo(px,py)}x.stroke();
+  let a=0,c=0;for(let i=1;i<R.n;i++){if(R.e[i]>R.e[a])a=i;if(R.e[i]<R.e[c])c=i}
+  if(R.n>1)[a,c].forEach((i,j)=>{const px=X(R.t[i]),py=Y(R.e[i]),rt=px>W*.75;x.fillStyle=R.color;x.beginPath();x.arc(px,py,4,0,7);x.fill();x.textAlign=rt?'right':'left';x.fillText((j?'최소 ':'최대 ')+fmt(R.e[i]),px+(rt?-7:7),py+(j?14:-7))})})}
+function legend(){const l=$('lg');l.innerHTML='';runs.forEach(R=>{const d=document.createElement('div');d.className='chip';d.innerHTML=`<i style="background:${R.color}"></i>${R.label}${R.n>NS?` · 최대 ${fmt(Math.max(...R.e))} / 최소 ${fmt(Math.min(...R.e))}`:''}<b>✕</b>`;d.querySelector('b').onclick=()=>{if(R===cur&&running)return;runs=runs.filter(q=>q!==R);legend();drawGraph()};l.append(d)})}
+function idle(){drawScene(0,0,0);$('st').textContent='ε = 0';drawGraph()}
+function start(){if(running)return;const m=model(),t=[],e=[];
+ for(let i=0;i<=NS;i++){const tt=m.dur*i/NS;t.push(tt);e.push(m.emf(tt))}
+ const peak=Math.max(...e.map(Math.abs)),mx=Math.max(...e),mn=Math.min(...e);
+ const R={color:pal[cnt%pal.length],label:`#${++cnt} ${P.x}rpm · B=${P.B}T N=${P.N} a=${P.a}cm`,t,e,dur:m.dur,n:0};
+ runs.push(R);cur=R;running=true;$('go').disabled=true;legend();
+ const ps=m.dur/(+$('sp').value),t0=performance.now();
+ (function loop(now){const fr=Math.min(1,(now-t0)/1000/ps);R.n=Math.floor(fr*NS)+1;const i=R.n-1;
+  drawScene(t[i],e[i],peak);$('st').textContent='ε = '+fmt(e[i])+'  (최대 '+fmt(mx)+' / 최소 '+fmt(mn)+')';drawGraph();
+  if(fr<1)requestAnimationFrame(loop);else{running=false;$('go').disabled=false;R.n=NS+1;legend();drawGraph()}})(t0)}
+$('go').onclick=start;
+$('clr').onclick=()=>{if(running)return;runs=[];cnt=0;legend();idle()};
+function resize(){sx=fit(sc);gx=fit(gr);if(!running)idle();else drawGraph()}
+addEventListener('resize',resize);
+matchMedia('(prefers-color-scheme:dark)').onchange=()=>{if(!running)idle()};
+resize();
+</script></body></html>
