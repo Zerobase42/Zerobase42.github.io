@@ -32,6 +32,8 @@ export function minifyCode(){
     }
 
     // Highlight
+    const output = document.getElementById("output-code");
+
     const highlighted = hljs.highlight(result, {
         language: "cpp"
     });
