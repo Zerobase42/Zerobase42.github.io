@@ -3,31 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>전자기 유도 실험 : 코일 회전에 따른 유도 기전력 변화</title>
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f6fb;--card:#fff;--tx:#1d2433;--mu:#69728a;--bd:#dde1ea;--ac:#2563eb;--grid:#e3e7ef;--sc:#fafbff}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12151c;--card:#1b2029;--tx:#e8ebf2;--mu:#98a1b3;--bd:#2c3340;--ac:#6ea0ff;--grid:#2a303c;--sc:#161a22}}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#12151c;--card:#1b2029;--tx:#e8ebf2;--mu:#98a1b3;--bd:#2c3340;--ac:#6ea0ff;--grid:#2a303c;--sc:#161a22}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Noto Sans KR","Malgun Gothic",sans-serif;line-height:1.5}
-.w{max-width:1400px;margin:0 auto;padding:14px}
-h1{font-size:18px;margin:0 0 8px}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}.cols>*{min-width:0}@media(max-width:860px){.cols{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-top:10px}
-.desc{color:var(--mu);font-size:13px;margin:0 2px}
-canvas{width:100%;display:block;border-radius:10px;background:var(--sc)}
-#ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px 18px;margin-top:12px}
-.r label{font-size:13px;color:var(--mu);display:block}
-.bg{display:flex;gap:6px;flex-wrap:wrap}.bg button{min-width:52px;padding:7px 12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:8px;cursor:pointer;font-size:14px}.bg button.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}
-.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
-.bar button,.bar select{padding:9px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:14px;cursor:pointer}
-.bar .go{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}
-.bar button:disabled{opacity:.5}
-#st{margin-left:auto;font-size:14px;font-variant-numeric:tabular-nums}
-#lg{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.chip{display:flex;align-items:center;gap:6px;border:1px solid var(--bd);border-radius:20px;padding:2px 4px 2px 8px;font-size:12px}
-.chip i{width:12px;height:12px;border-radius:50%}
-.chip b{cursor:pointer;color:var(--mu);padding:0 5px}
-.note{font-size:12px;color:var(--mu);margin:0 0 8px;line-height:1.45}
+*,:root{box-sizing:border-box}#ctl,.cols{display:grid}.desc,.r label{font-size:13px;color:var(--mu)}.bg button,body{background:var(--bg)}:root{padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0);--bg:#f4f6fb;--card:#fff;--tx:#1d2433;--mu:#69728a;--bd:#dde1ea;--ac:#2563eb;--grid:#e3e7ef;--sc:#fafbff}@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#12151c;--card:#1b2029;--tx:#e8ebf2;--mu:#98a1b3;--bd:#2c3340;--ac:#6ea0ff;--grid:#2a303c;--sc:#161a22}}:root[data-theme=dark]{color-scheme:dark;--bg:#12151c;--card:#1b2029;--tx:#e8ebf2;--mu:#98a1b3;--bd:#2c3340;--ac:#6ea0ff;--grid:#2a303c;--sc:#161a22}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;color:var(--tx);font-family:system-ui,-apple-system,"Noto Sans KR","Malgun Gothic",sans-serif;line-height:1.5}.w{max-width:1400px;margin:0 auto;padding:14px}h1{font-size:18px;margin:0 0 8px}.cols{grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}.bar,.bg{display:flex;flex-wrap:wrap}.cols>*{min-width:0}@media(max-width:860px){.cols{grid-template-columns:1fr}}.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-top:10px}.desc{margin:0 2px}.chip,.note{font-size:12px}#ctl,.bar{margin-top:12px}canvas{width:100%;display:block;border-radius:10px;background:var(--sc)}#ctl{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px 18px}.r label{display:block}.bar button,.bar select,.bg button{color:var(--tx);font-size:14px;cursor:pointer}.bg{gap:6px}.bg button{min-width:52px;padding:7px 12px;border:1px solid var(--bd);border-radius:8px}.bar .go,.bg button.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}.bar{gap:8px;align-items:center}#lg,.chip{display:flex;gap:6px}.bar button,.bar select{padding:9px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--card)}.chip b,.note{color:var(--mu)}.bar button:disabled{opacity:.5}#st{margin-left:auto;font-size:14px;font-variant-numeric:tabular-nums}#lg{flex-wrap:wrap;margin-top:8px}.chip{align-items:center;border:1px solid var(--bd);border-radius:20px;padding:2px 4px 2px 8px}.chip i{width:12px;height:12px;border-radius:50%}.chip b{cursor:pointer;padding:0 5px}.note{margin:0 0 8px;line-height:1.45}
 </style></head><body><div class="w">
 <h1>⚡ 전자기 유도 실험 : 코일 회전에 따른 유도 기전력 변화</h1>
 <div class="desc">코일 안쪽 중심에 자석을 두고, 코일을 자석 중심으로 회전시킵니다.</div>
@@ -43,57 +19,5 @@ canvas{width:100%;display:block;border-radius:10px;background:var(--sc)}
 <div id="lg"></div>
 <div class="bar" style="margin-top:8px"><button id="clr">그래프 전체 지우기</button></div></div>
 </div></div>
-<script>
-const V=Math.PI*1e-4*0.02,NS=600,pal=['#e11d48','#2563eb','#16a34a','#f59e0b','#9333ea','#0891b2','#ea580c','#db2777'];
-const CTL=[['x','조작변인 : 코일의 회전 속도 (rpm)',[150,300,450,600]],['B','통제변인 : 자석의 세기 (T)',[1,2,3,4]],['N','통제변인 : 코일의 감은 횟수 (회)',[200,400,600,800]],['a','통제변인 : 코일의 반지름 (cm)',[2,4,6,8]]];
-let P={x:300,B:1,N:200,a:4},runs=[],cur=null,running=false,cnt=0;
-const $=i=>document.getElementById(i),sc=$('sc'),gr=$('gr'),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-function fmt(v){const a=Math.abs(v);return a>=1?v.toFixed(2)+' V':a>=1e-3?(v*1e3).toFixed(2)+' mV':(v*1e6).toFixed(1)+' μV'}
-function model(){const w=P.x*Math.PI/30,f=P.B*V/(2*P.a/100);return{dur:6*Math.PI/w,emf:t=>P.N*f*w*Math.sin(w*t)}}
-function row(k,label,opts){const d=document.createElement('div');d.className='r';
- d.innerHTML=`<label>${label}</label><div class="bg">${opts.map(o=>`<button data-v="${o}">${o}</button>`).join('')}</div>`;
- const bs=d.querySelectorAll('button'),sel=()=>bs.forEach(b=>b.classList.toggle('on',+b.dataset.v===P[k]));
- bs.forEach(b=>b.onclick=()=>{if(running)return;P[k]=+b.dataset.v;sel();idle()});sel();return d}
-CTL.forEach(c=>$('ctl').append(row(c[0],c[1],c[2])));
-function fit(c){const d=devicePixelRatio||1;c._w=c.clientWidth;c._h=c.clientHeight;c.width=c._w*d;c.height=c._h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x}
-let sx,gx;
-function magnet(x,cx,cy,w,h){x.fillStyle='#e11d48';x.fillRect(cx-w/2,cy-h/2,w,h/2);x.fillStyle='#2563eb';x.fillRect(cx-w/2,cy,w,h/2);
- x.fillStyle='#fff';x.font='bold 13px sans-serif';x.textAlign='center';x.fillText('N',cx,cy-h/4+5);x.fillText('S',cx,cy+h/4+5)}
-function coil(x,cx,cy,rx,ry,rot){x.save();x.translate(cx,cy);x.rotate(rot);x.strokeStyle='#d97706';x.lineWidth=1.3;
- const n=Math.max(1,Math.round(P.N/20)),sp=1.6,y0=-(n-1)*sp/2;for(let i=0;i<n;i++){x.beginPath();x.ellipse(0,y0+i*sp,rx,ry,0,0,7);x.stroke()}x.restore()}
-function drawScene(t,emf,peak){const x=sx,W=sc._w,H=sc._h;x.clearRect(0,0,W,H);
- const rx=Math.max(P.a/100*W*5.7,40),th=P.x*Math.PI/30*t;
- coil(x,W/2,H/2,rx,rx*.22,th);magnet(x,W/2,H/2,26,50);
- const al=peak?Math.min(1,Math.abs(emf)/peak):0;x.fillStyle=`rgba(250,204,21,${.12+.88*al})`;x.strokeStyle=css('--mu');
- x.beginPath();x.arc(W-34,34,16,0,7);x.fill();x.stroke();x.fillStyle=css('--tx');x.font='12px sans-serif';x.textAlign='right';x.fillText('t = '+(t*1000).toFixed(0)+' ms',W-60,38)}
-function drawGraph(){const x=gx,W=gr._w,H=gr._h,l=64,r=12,tp=12,b=34;x.clearRect(0,0,W,H);
- let tm=0,ym=0;runs.forEach(R=>{tm=Math.max(tm,R.dur);R.e.forEach(v=>ym=Math.max(ym,Math.abs(v)))});
- if(!runs.length){tm=.3;ym=1e-3}ym*=1.1;const k=10**Math.floor(Math.log10(ym)),f=ym/k;ym=(f<=1?1:f<=2?2:f<=5?5:10)*k;
- const[u,us]=ym>=1?['V',1]:ym>=1e-3?['mV',1e3]:['μV',1e6];
- const X=t=>l+(W-l-r)*t/tm,Y=v=>tp+(H-tp-b)*(1-(v+ym)/(2*ym));
- x.font='11px sans-serif';x.lineWidth=1;
- for(let i=-2;i<=2;i++){const v=ym*i/2,y=Y(v);x.strokeStyle=css('--grid');x.beginPath();x.moveTo(l,y);x.lineTo(W-r,y);x.stroke();x.fillStyle=css('--mu');x.textAlign='right';x.fillText((v*us).toFixed(us==1?2:1),l-6,y+4)}
- for(let i=0;i<=5;i++){const t=tm*i/5,xx=X(t);x.strokeStyle=css('--grid');x.beginPath();x.moveTo(xx,tp);x.lineTo(xx,H-b);x.stroke();x.fillStyle=css('--mu');x.textAlign='center';x.fillText((t*1000).toFixed(0),xx,H-b+14)}
- x.textAlign='center';x.fillStyle=css('--mu');x.fillText('시간 (ms)',(l+W-r)/2,H-4);x.save();x.translate(12,H/2);x.rotate(-Math.PI/2);x.fillText('기전력 ε ('+u+')',0,0);x.restore();
- x.strokeStyle=css('--mu');x.beginPath();x.moveTo(l,Y(0));x.lineTo(W-r,Y(0));x.stroke();
- runs.forEach(R=>{x.strokeStyle=R.color;x.lineWidth=2;x.beginPath();for(let i=0;i<R.n;i++){const px=X(R.t[i]),py=Y(R.e[i]);i?x.lineTo(px,py):x.moveTo(px,py)}x.stroke();
-  let a=0,c=0;for(let i=1;i<R.n;i++){if(R.e[i]>R.e[a])a=i;if(R.e[i]<R.e[c])c=i}
-  if(R.n>1)[a,c].forEach((i,j)=>{const px=X(R.t[i]),py=Y(R.e[i]),rt=px>W*.75;x.fillStyle=R.color;x.beginPath();x.arc(px,py,4,0,7);x.fill();x.textAlign=rt?'right':'left';x.fillText((j?'최소 ':'최대 ')+fmt(R.e[i]),px+(rt?-7:7),py+(j?14:-7))})})}
-function legend(){const l=$('lg');l.innerHTML='';runs.forEach(R=>{const d=document.createElement('div');d.className='chip';d.innerHTML=`<i style="background:${R.color}"></i>${R.label}${R.n>NS?` · 최대 ${fmt(Math.max(...R.e))} / 최소 ${fmt(Math.min(...R.e))}`:''}<b>✕</b>`;d.querySelector('b').onclick=()=>{if(R===cur&&running)return;runs=runs.filter(q=>q!==R);legend();drawGraph()};l.append(d)})}
-function idle(){drawScene(0,0,0);$('st').textContent='ε = 0';drawGraph()}
-function start(){if(running)return;const m=model(),t=[],e=[];
- for(let i=0;i<=NS;i++){const tt=m.dur*i/NS;t.push(tt);e.push(m.emf(tt))}
- const peak=Math.max(...e.map(Math.abs)),mx=Math.max(...e),mn=Math.min(...e);
- const R={color:pal[cnt%pal.length],label:`#${++cnt} ${P.x}rpm · B=${P.B}T N=${P.N} a=${P.a}cm`,t,e,dur:m.dur,n:0};
- runs.push(R);cur=R;running=true;$('go').disabled=true;legend();
- const ps=m.dur/(+$('sp').value),t0=performance.now();
- (function loop(now){const fr=Math.min(1,(now-t0)/1000/ps);R.n=Math.floor(fr*NS)+1;const i=R.n-1;
-  drawScene(t[i],e[i],peak);$('st').textContent='ε = '+fmt(e[i])+'  (최대 '+fmt(mx)+' / 최소 '+fmt(mn)+')';drawGraph();
-  if(fr<1)requestAnimationFrame(loop);else{running=false;$('go').disabled=false;R.n=NS+1;legend();drawGraph()}})(t0)}
-$('go').onclick=start;
-$('clr').onclick=()=>{if(running)return;runs=[];cnt=0;legend();idle()};
-function resize(){sx=fit(sc);gx=fit(gr);if(!running)idle();else drawGraph()}
-addEventListener('resize',resize);
-matchMedia('(prefers-color-scheme:dark)').onchange=()=>{if(!running)idle()};
-resize();
-</script></body></html>
+<script>const V=1e-4*Math.PI*.02,NS=600,pal=["#e11d48","#2563eb","#16a34a","#f59e0b","#9333ea","#0891b2","#ea580c","#db2777"],CTL=[["x","조작변인 : 코일의 회전 속도 (rpm)",[150,300,450,600]],["B","통제변인 : 자석의 세기 (T)",[1,2,3,4]],["N","통제변인 : 코일의 감은 횟수 (회)",[200,400,600,800]],["a","통제변인 : 코일의 반지름 (cm)",[2,4,6,8]]];let P={x:300,B:1,N:200,a:4},runs=[],cur=null,running=!1,cnt=0;const $=e=>document.getElementById(e),sc=$("sc"),gr=$("gr"),css=e=>getComputedStyle(document.documentElement).getPropertyValue(e).trim();function fmt(e){let t=Math.abs(e);return t>=1?e.toFixed(2)+" V":t>=.001?(1e3*e).toFixed(2)+" mV":(1e6*e).toFixed(1)+" μV"}function model(){let e=P.x*Math.PI/30,t=P.B*V/(2*P.a/100);return{dur:6*Math.PI/e,emf:l=>P.N*t*e*Math.sin(e*l)}}function row(e,t,l){let n=document.createElement("div");n.className="r",n.innerHTML=`<label>${t}</label><div class="bg">${l.map(e=>`<button data-v="${e}">${e}</button>`).join("")}</div>`;let r=n.querySelectorAll("button"),i=()=>r.forEach(t=>t.classList.toggle("on",+t.dataset.v===P[e]));return r.forEach(t=>t.onclick=()=>{running||(P[e]=+t.dataset.v,i(),idle())}),i(),n}function fit(e){let t=devicePixelRatio||1;e._w=e.clientWidth,e._h=e.clientHeight,e.width=e._w*t,e.height=e._h*t;let l=e.getContext("2d");return l.setTransform(t,0,0,t,0,0),l}CTL.forEach(e=>$("ctl").append(row(e[0],e[1],e[2])));let sx,gx;function magnet(e,t,l,n,r){e.fillStyle="#e11d48",e.fillRect(t-n/2,l-r/2,n,r/2),e.fillStyle="#2563eb",e.fillRect(t-n/2,l,n,r/2),e.fillStyle="#fff",e.font="bold 13px sans-serif",e.textAlign="center",e.fillText("N",t,l-r/4+5),e.fillText("S",t,l+r/4+5)}function coil(e,t,l,n,r,i){e.save(),e.translate(t,l),e.rotate(i),e.strokeStyle="#d97706",e.lineWidth=1.3;let o=Math.max(1,Math.round(P.N/20)),a=-(1.6*(o-1))/2;for(let s=0;s<o;s++)e.beginPath(),e.ellipse(0,a+1.6*s,n,r,0,0,7),e.stroke();e.restore()}function drawScene(e,t,l){let n=sx,r=sc._w,i=sc._h;n.clearRect(0,0,r,i);let o=Math.max(P.a/100*r*5.7,40),a=P.x*Math.PI/30*e;coil(n,r/2,i/2,o,.22*o,a),magnet(n,r/2,i/2,26,50),n.fillStyle=`rgba(250,204,21,${.12+.88*(l?Math.min(1,Math.abs(t)/l):0)})`,n.strokeStyle=css("--mu"),n.beginPath(),n.arc(r-34,34,16,0,7),n.fill(),n.stroke(),n.fillStyle=css("--tx"),n.font="12px sans-serif",n.textAlign="right",n.fillText("t = "+(1e3*e).toFixed(0)+" ms",r-60,38)}function drawGraph(){let e=gx,t=gr._w,l=gr._h;e.clearRect(0,0,t,l);let n=0,r=0;runs.forEach(e=>{n=Math.max(n,e.dur),e.e.forEach(e=>r=Math.max(r,Math.abs(e)))}),runs.length||(n=.3,r=.001),r*=1.1;let i=10**Math.floor(Math.log10(r)),o=r/i;r=(o<=1?1:o<=2?2:o<=5?5:10)*i;let[a,s]=r>=1?["V",1]:r>=.001?["mV",1e3]:["μV",1e6],c=e=>64+(t-64-12)*e/n,f=e=>12+(l-12-34)*(1-(e+r)/(2*r));e.font="11px sans-serif",e.lineWidth=1;for(let _=-2;_<=2;_++){let d=r*_/2,u=f(d);e.strokeStyle=css("--grid"),e.beginPath(),e.moveTo(64,u),e.lineTo(t-12,u),e.stroke(),e.fillStyle=css("--mu"),e.textAlign="right",e.fillText((d*s).toFixed(1==s?2:1),58,u+4)}for(let g=0;g<=5;g++){let m=n*g/5,x=c(m);e.strokeStyle=css("--grid"),e.beginPath(),e.moveTo(x,12),e.lineTo(x,l-34),e.stroke(),e.fillStyle=css("--mu"),e.textAlign="center",e.fillText((1e3*m).toFixed(0),x,l-34+14)}e.textAlign="center",e.fillStyle=css("--mu"),e.fillText("시간 (ms)",(64+t-12)/2,l-4),e.save(),e.translate(12,l/2),e.rotate(-Math.PI/2),e.fillText("기전력 ε ("+a+")",0,0),e.restore(),e.strokeStyle=css("--mu"),e.beginPath(),e.moveTo(64,f(0)),e.lineTo(t-12,f(0)),e.stroke(),runs.forEach(l=>{e.strokeStyle=l.color,e.lineWidth=2,e.beginPath();for(let n=0;n<l.n;n++){let r=c(l.t[n]),i=f(l.e[n]);n?e.lineTo(r,i):e.moveTo(r,i)}e.stroke();let o=0,a=0;for(let s=1;s<l.n;s++)l.e[s]>l.e[o]&&(o=s),l.e[s]<l.e[a]&&(a=s);l.n>1&&[o,a].forEach((n,r)=>{let i=c(l.t[n]),o=f(l.e[n]),a=i>.75*t;e.fillStyle=l.color,e.beginPath(),e.arc(i,o,4,0,7),e.fill(),e.textAlign=a?"right":"left",e.fillText((r?"최소 ":"최대 ")+fmt(l.e[n]),i+(a?-7:7),o+(r?14:-7))})})}function legend(){let e=$("lg");e.innerHTML="",runs.forEach(t=>{let l=document.createElement("div");l.className="chip",l.innerHTML=`<i style="background:${t.color}"></i>${t.label}${t.n>600?` \xb7 최대 ${fmt(Math.max(...t.e))} / 최소 ${fmt(Math.min(...t.e))}`:""}<b>✕</b>`,l.querySelector("b").onclick=()=>{t===cur&&running||(runs=runs.filter(e=>e!==t),legend(),drawGraph())},e.append(l)})}function idle(){drawScene(0,0,0),$("st").textContent="ε = 0",drawGraph()}function start(){if(running)return;let e=model(),t=[],l=[];for(let n=0;n<=600;n++){let r=e.dur*n/600;t.push(r),l.push(e.emf(r))}let i=Math.max(...l.map(Math.abs)),o=Math.max(...l),a=Math.min(...l),s={color:pal[cnt%pal.length],label:`#${++cnt} ${P.x}rpm \xb7 B=${P.B}T N=${P.N} a=${P.a}cm`,t,e:l,dur:e.dur,n:0};runs.push(s),cur=s,running=!0,$("go").disabled=!0,legend();let c=e.dur/+$("sp").value,f=performance.now();!function e(n){let r=Math.min(1,(n-f)/1e3/c);s.n=Math.floor(600*r)+1;let _=s.n-1;drawScene(t[_],l[_],i),$("st").textContent="ε = "+fmt(l[_])+"  (최대 "+fmt(o)+" / 최소 "+fmt(a)+")",drawGraph(),r<1?requestAnimationFrame(e):(running=!1,$("go").disabled=!1,s.n=601,legend(),drawGraph())}(f)}function resize(){sx=fit(sc),gx=fit(gr),running?drawGraph():idle()}$("go").onclick=start,$("clr").onclick=()=>{running||(runs=[],cnt=0,legend(),idle())},addEventListener("resize",resize),matchMedia("(prefers-color-scheme:dark)").onchange=()=>{running||idle()},resize();</script>
+</body></html>

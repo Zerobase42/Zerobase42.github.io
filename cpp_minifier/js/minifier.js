@@ -39,8 +39,26 @@ export function minify(code,removeComments=true,flattenCode=false,undefMacro=fal
         code=code.replace(/\/\/[^\n]*/g,"");
     }
     if(flattenCode){
-        //코드 평탄화
-        code=code.replace(/^(?!#)\s*(.*?)\s*\n\s*/gm,"$1");
+        // 코드 평탄화
+        const lines = code.split('\n');
+        const directives = [];
+        let normalCode = "";
+    
+        for(let line of lines){
+            line = line.trim();
+    
+            if(line.startsWith('#')){
+                directives.push(line);
+            }
+            else if(line !== ""){
+                normalCode += line;
+            }
+        }
+    
+        code = [
+            ...directives,
+            normalCode
+        ].filter(line => line !== "").join("\n");
     }
     //빈 줄 제거
     code=code.replace(/\n\s*\n+/g,"\n");
