@@ -47,11 +47,6 @@ export function minify(code,removeComments=true,flattenCode=false,undefMacro=fal
         for(let line of lines){
             line = line.trim();
     
-            if(line === ""){
-                continue;
-            }
-    
-            // 전처리문은 독립된 줄로 유지
             if(line.startsWith('#')){
                 if(normalCode !== ""){
                     result.push(normalCode);
@@ -60,17 +55,11 @@ export function minify(code,removeComments=true,flattenCode=false,undefMacro=fal
     
                 result.push(line);
             }
-            else{
-                // 일반 코드는 공백을 두고 합치기
-                if(normalCode !== ""){
-                    normalCode += " ";
-                }
-    
+            else if(line !== ""){
                 normalCode += line;
             }
         }
     
-        // 마지막 일반 코드 추가
         if(normalCode !== ""){
             result.push(normalCode);
         }

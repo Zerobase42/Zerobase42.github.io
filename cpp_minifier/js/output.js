@@ -25,9 +25,6 @@ export function minifyCode(){
     );
 
     // 반환값 검사
-    console.log("minify result:", result);
-    console.log("result type:", typeof result);
-
     if(typeof result !== "string"){
         throw new TypeError(
             `minify() must return a string. Received: ${typeof result}`
@@ -35,16 +32,9 @@ export function minifyCode(){
     }
 
     // Highlight
-    console.log("hljs:", hljs);
-    console.log("hljs.highlight:", hljs.highlight);
-    console.log("result:", result);
-    console.log("result type:", typeof result);
-
     const highlighted = hljs.highlight(result, {
         language: "cpp"
     });
-
-    console.log("highlighted:", highlighted);
 
     output.innerHTML = highlighted.value;
 
