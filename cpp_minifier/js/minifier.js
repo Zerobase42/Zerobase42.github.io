@@ -9,7 +9,7 @@ import {
 
 import {undef_macro} from "./undef_marco.js";
 
-import {renameVariables} from "./variableRename.js";
+// import {renameVariables} from "./variableRename.js";
 
 const HARD_TEXT = "궯둞쉞렣";
 
@@ -292,13 +292,13 @@ export async function minify(
     // 8. 변수명 변경
     // ========================================================
 
-    if(renameVars){
+    // if(renameVars){
 
-        code = await renameVariables(
-            code,
-            renameOptions
-        );
-    }
+    //     code = await renameVariables(
+    //         code,
+    //         renameOptions
+    //     );
+    // }
 
     return code;
 }
