@@ -31,7 +31,7 @@ export function minifyCode(){
         );
     }
 
-    // Highlight
+    // Highlight    
     const output = document.getElementById("output-code");
 
     const highlighted = hljs.highlight(result, {
