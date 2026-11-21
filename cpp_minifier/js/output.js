@@ -35,11 +35,18 @@ export function minifyCode(){
     }
 
     // Highlight
-    const output = document.getElementById("output-code");
+    console.log("hljs:", hljs);
+    console.log("hljs.highlight:", hljs.highlight);
+    console.log("result:", result);
+    console.log("result type:", typeof result);
 
-    output.innerHTML = hljs.highlight(result, {
+    const highlighted = hljs.highlight(result, {
         language: "cpp"
-    }).value;
+    });
+
+    console.log("highlighted:", highlighted);
+
+    output.innerHTML = highlighted.value;
 
     // 줄 번호
     const lines = result.split("\n").length;
